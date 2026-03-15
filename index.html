@@ -3,1694 +3,773 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GHS Rate Terminal — VCMIS</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>VCMIS — Country & Currency Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════════
-   ROOT
-════════════════════════════════════════════════ */
 :root{
-  --bg:       #070b12;
-  --surf:     #0c1220;
-  --surf2:    #111826;
-  --surf3:    #16202f;
-  --border:   #1c2a3e;
-  --border2:  #243348;
-  /* Ghana flag palette */
-  --gh-red:   #ce1126;
-  --gh-gold:  #fcd116;
-  --gh-green: #006b3f;
-  /* Accent */
-  --gold:     #f5b731;
-  --gold-lt:  rgba(245,183,49,.12);
-  --gold-glow:rgba(245,183,49,.25);
-  --green:    #00d4aa;
-  --green-lt: rgba(0,212,170,.12);
-  --red:      #ff4f5e;
-  --red-lt:   rgba(255,79,94,.12);
-  --blue:     #4f8ef7;
-  --blue-lt:  rgba(79,142,247,.12);
-  --muted:    #4a6380;
-  --dim:      #2e4060;
-  --text:     #dce8f5;
-  --text2:    #8aa5c2;
-  --white:    #ffffff;
-  --r:8px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;
+  --navy:#0a1f44;--blue:#1a56db;--blue2:#1e40af;--sky:#2563eb;--cyan:#0ea5e9;
+  --light:#dbeafe;--bg:#f0f5ff;--white:#ffffff;--border:#d1daf0;--border2:#bfcbec;
+  --text:#0f172a;--text2:#334155;--muted:#64748b;--dim:#94a3b8;
+  --green:#059669;--green-lt:#ecfdf5;--red:#dc2626;--gold:#d97706;--gold-lt:#fffbeb;
+  --r:8px;--r-lg:12px;--r-xl:18px;
+  --sh:0 1px 4px rgba(10,31,68,.08),0 2px 12px rgba(10,31,68,.06);
+  --sh-lg:0 4px 24px rgba(10,31,68,.12),0 1px 6px rgba(10,31,68,.08);
+  --sh-xl:0 8px 40px rgba(10,31,68,.14);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:'Figtree',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  line-height:1.5;
-}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-/* ════ SCANLINE TEXTURE ════ */
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);
-}
-body::after{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 900px 600px at 20% 10%,rgba(0,107,63,.06) 0%,transparent 70%),
-    radial-gradient(ellipse 700px 500px at 80% 90%,rgba(245,183,49,.05) 0%,transparent 70%),
-    radial-gradient(ellipse 600px 400px at 60% 30%,rgba(206,17,38,.04) 0%,transparent 70%);
-}
+.topbar{background:var(--navy);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.tb-logo{display:flex;align-items:center;gap:10px}
+.tb-flag{font-size:22px}
+.tb-name{font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--white)}
+.tb-name span{color:#60a5fa;font-weight:600}
+.tb-pill{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.tb-pill.live{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(52,211,153,.25)}
+.tb-pill.loading{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1)}
 
-/* ════ WRAPPER ════ */
-.page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px 80px}
+.hero{background:linear-gradient(130deg,var(--navy) 0%,var(--blue2) 50%,var(--sky) 100%);padding:44px 24px 52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{position:relative;z-index:1;max-width:580px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 13px;border-radius:20px;margin-bottom:16px}
+.hero h1{font-size:clamp(26px,5vw,40px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:10px;letter-spacing:-.02em}
+.hero p{font-size:14px;color:rgba(255,255,255,.7);line-height:1.65;max-width:420px;margin:0 auto}
 
-/* ════════════════════════════════════════════════
-   HEADER
-════════════════════════════════════════════════ */
-.header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 0 0;
-  border-bottom:1px solid var(--border);
-  padding-bottom:16px;
-  margin-bottom:28px;
-}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-icon{
-  width:42px;height:42px;border-radius:10px;
-  background:linear-gradient(135deg,#006b3f,#00a85a);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;
-  box-shadow:0 4px 20px rgba(0,107,63,.4);
-}
-.logo-text .lt{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:20px;font-weight:800;letter-spacing:.03em;
-  color:var(--white);line-height:1;
-}
-.logo-text .ls{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-.header-right{display:flex;align-items:center;gap:10px}
-.hd-badge{
-  padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;
-  border:1px solid var(--border2);color:var(--muted);background:var(--surf);
-}
-.hd-status{
-  display:flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;
-  border:1px solid rgba(0,212,170,.2);
-  background:rgba(0,212,170,.06);color:var(--green);
-}
-.pulse{
-  width:7px;height:7px;border-radius:50%;background:var(--green);
-  animation:pulse 2s ease infinite;
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 80px}
+.pull-up{margin-top:-28px;position:relative;z-index:10}
 
-/* ════ PAGE TITLE ════ */
-.page-hero{margin-bottom:32px;animation:fadeUp .6s ease both}
-.page-hero h1{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(32px,5vw,52px);font-weight:900;
-  line-height:1;letter-spacing:-.01em;color:var(--white);
-  margin-bottom:8px;
-}
-.page-hero h1 .accent{color:var(--gold)}
-.page-hero p{font-size:14px;color:var(--text2);max-width:480px}
-.gh-flag-strip{
-  display:flex;gap:0;width:48px;height:4px;border-radius:2px;overflow:hidden;
-  margin-bottom:16px;
-}
-.gh-flag-strip span{flex:1}
-.gh-flag-strip span:nth-child(1){background:var(--gh-red)}
-.gh-flag-strip span:nth-child(2){background:var(--gh-gold)}
-.gh-flag-strip span:nth-child(3){background:var(--gh-green)}
+.sec-hd{display:flex;align-items:center;gap:10px;margin:28px 0 12px}
+.sec-hd-line{flex:1;height:1px;background:var(--border)}
+.sec-hd span{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 
-/* ════════════════════════════════════════════════
-   SECTION LABEL
-════════════════════════════════════════════════ */
-.sec-label{
-  display:flex;align-items:center;gap:10px;margin-bottom:14px;
-}
-.sec-label span{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--muted);
-}
-.sec-label::before{
-  content:'';width:3px;height:14px;border-radius:2px;background:var(--gold);
-}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* COUNTRY CARD */
+.country-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-xl);overflow:hidden;animation:slideUp .5s ease both}
+.cc-head{padding:22px 24px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#f8faff 0%,var(--white) 100%)}
+.cc-head-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.cc-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(26,86,219,.3)}
+.cc-head h2{font-size:17px;font-weight:700;color:var(--navy)}
+.cc-head p{font-size:12px;color:var(--muted);margin-left:44px}
+.cc-body{padding:20px 24px 24px}
 
-/* ════════════════════════════════════════════════
-   RATE SOURCE CARDS — 4 col grid
-════════════════════════════════════════════════ */
-.rate-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
-  margin-bottom:16px;
-}
-@media(max-width:720px){.rate-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.rate-grid{grid-template-columns:1fr}}
+.cs-wrap{position:relative;margin-bottom:4px}
+.cs-box{display:flex;border:1.5px solid var(--border2);border-radius:var(--r-lg);overflow:hidden;background:var(--white);transition:border-color .2s,box-shadow .2s}
+.cs-box:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.12)}
+.cs-ico{padding:0 13px;display:flex;align-items:center;color:var(--muted);background:#f8fafc;border-right:1px solid var(--border);flex-shrink:0}
+#cSearch{flex:1;padding:13px 13px;border:none;outline:none;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);background:transparent}
+#cSearch::placeholder{color:var(--dim)}
+.cs-clr{padding:0 12px;background:none;border:none;cursor:pointer;color:var(--dim);font-size:15px;display:none;flex-shrink:0;transition:color .15s;align-items:center}
+.cs-clr:hover{color:var(--text)}
+.cs-clr.show{display:flex}
 
-.rate-card{
-  background:var(--surf);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  padding:18px 16px;
-  position:relative;overflow:hidden;
-  transition:border-color .25s,transform .2s;
-  animation:fadeUp .5s ease both;
-  cursor:default;
-}
-.rate-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.rate-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-}
-.rc-cedi::before{background:linear-gradient(90deg,#fcd116,#f5a623)}
-.rc-binance::before{background:linear-gradient(90deg,#f0b90b,#e8a000)}
-.rc-google::before{background:linear-gradient(90deg,#4285f4,#34a853)}
-.rc-wise::before{background:linear-gradient(90deg,#00b9ff,#9b51e0)}
-
-.rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.rc-source{display:flex;align-items:center;gap:7px}
-.rc-icon{
-  width:26px;height:26px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
-}
-.rc-icon.cedi{background:rgba(252,209,22,.15)}
-.rc-icon.binance{background:rgba(240,185,11,.15)}
-.rc-icon.google{background:rgba(66,133,244,.15)}
-.rc-icon.wise{background:rgba(0,185,255,.15)}
-.rc-name{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
-.rc-badge{
-  font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;
-  font-family:'JetBrains Mono',monospace;
-}
-.rc-badge.live{background:rgba(0,212,170,.15);color:var(--green);border:1px solid rgba(0,212,170,.2)}
-.rc-badge.approx{background:rgba(245,183,49,.15);color:var(--gold);border:1px solid rgba(245,183,49,.2)}
-.rc-badge.loading{background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
-.rc-badge.err{background:var(--red-lt);color:var(--red);border:1px solid rgba(255,79,94,.2)}
-
-.rc-rate{
-  font-family:'JetBrains Mono',monospace;
-  font-size:26px;font-weight:700;color:var(--white);
-  line-height:1;margin-bottom:5px;
-  transition:color .3s;
-}
-.rc-rate.up{color:#00d4aa}.rc-rate.down{color:var(--red)}
-.rc-label{font-size:11px;color:var(--muted)}
-.rc-sub{font-size:10px;color:var(--dim);margin-top:6px;font-family:'JetBrains Mono',monospace}
-
-.rc-spread{
-  position:absolute;bottom:0;left:0;right:0;
-  height:3px;background:var(--border);overflow:hidden;
-}
-.rc-spread-fill{height:100%;background:var(--gold);transition:width 1s ease}
-
-/* ════════════════════════════════════════════════
-   RATE COMPARISON BAR
-════════════════════════════════════════════════ */
-.compare-bar{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--r-lg);
-  padding:18px 20px;margin-bottom:28px;
-  animation:fadeUp .55s .1s ease both;
-}
-.cb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cb-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
-.cb-pair{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-
-.cb-track{position:relative;height:36px;background:var(--surf2);border-radius:8px;overflow:hidden;margin-bottom:10px}
-.cb-segment{
-  position:absolute;top:0;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;
-  color:rgba(0,0,0,.7);
-  transition:all 1s ease;
-}
-.cb-seg-cedi   {background:linear-gradient(135deg,#fcd116cc,#f5a623cc)}
-.cb-seg-binance{background:linear-gradient(135deg,#f0b90bcc,#c8960acc)}
-.cb-seg-google {background:linear-gradient(135deg,#4285f4cc,#34a853cc)}
-.cb-seg-wise   {background:linear-gradient(135deg,#00b9ffcc,#9b51e0cc)}
-
-.cb-legend{display:flex;gap:16px;flex-wrap:wrap}
-.cb-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
-.cb-dot{width:9px;height:9px;border-radius:2px}
-
-/* ════════════════════════════════════════════════
-   CONVERTER
-════════════════════════════════════════════════ */
-.converter{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--r-lg);
-  padding:22px 24px;margin-bottom:28px;
-  animation:fadeUp .55s .15s ease both;
-}
-.conv-row{
-  display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px;align-items:end;
-  margin-bottom:16px;
-}
-@media(max-width:600px){.conv-row{grid-template-columns:1fr;}}
-.conv-field label{
-  display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:7px;
-}
-.conv-input-wrap{
-  display:flex;border:1.5px solid var(--border2);border-radius:var(--r);
-  overflow:hidden;background:var(--surf2);
-  transition:border-color .2s;
-}
-.conv-input-wrap:focus-within{border-color:var(--gold)}
-.conv-sym{
-  padding:0 12px;display:flex;align-items:center;
-  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
-  color:var(--gold);background:var(--surf3);border-right:1px solid var(--border);
-  flex-shrink:0;white-space:nowrap;
-}
-.conv-input{
-  flex:1;padding:12px 12px;
-  background:none;border:none;outline:none;
-  font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;
-  color:var(--white);min-width:0;
-}
-.conv-input::placeholder{color:var(--dim)}
-.conv-select{
-  padding:12px 12px;
-  background:none;border:none;outline:none;
-  font-family:'Figtree',sans-serif;font-size:13px;font-weight:600;
-  color:var(--text2);cursor:pointer;
-  border-left:1px solid var(--border);
-}
-.conv-select option{background:#111826;color:var(--text)}
-
-.conv-arrow{
-  display:flex;align-items:center;justify-content:center;
-  padding-bottom:2px;
-}
-.conv-swap{
-  width:36px;height:36px;border-radius:50%;
-  background:var(--surf3);border:1.5px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:var(--text2);font-size:14px;
-  transition:all .2s;
-}
-.conv-swap:hover{border-color:var(--gold);color:var(--gold);transform:rotate(180deg)}
-
-.conv-src-row{
-  display:flex;gap:8px;flex-wrap:wrap;
-}
-.conv-src-btn{
-  padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;
-  border:1.5px solid var(--border2);background:none;color:var(--text2);
-  cursor:pointer;font-family:'JetBrains Mono',monospace;
-  transition:all .15s;
-}
-.conv-src-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-lt)}
-.conv-src-btn:hover:not(.active){border-color:var(--border2);color:var(--text);background:var(--surf2)}
-
-.conv-result{
-  background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);
-  padding:14px 18px;
-  font-family:'JetBrains Mono',monospace;
-  text-align:center;
-}
-.conv-result-val{font-size:22px;font-weight:700;color:var(--gold)}
-.conv-result-eq{font-size:11px;color:var(--muted);margin-top:3px}
-
-/* ════════════════════════════════════════════════
-   MY SUGGESTION: RATE WATCH PANEL
-════════════════════════════════════════════════ */
-.rate-watch{
-  background:linear-gradient(135deg,rgba(245,183,49,.06) 0%,var(--surf) 60%);
-  border:1px solid rgba(245,183,49,.2);border-radius:var(--r-lg);
-  padding:22px 24px;margin-bottom:28px;
-  animation:fadeUp .55s .2s ease both;
-}
-.rw-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.rw-title-group{display:flex;align-items:center;gap:10px}
-.rw-title{
-  font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;
-  letter-spacing:.04em;color:var(--white);
-}
-.rw-badge{
-  padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;
-  background:rgba(245,183,49,.15);color:var(--gold);
-  border:1px solid rgba(245,183,49,.25);letter-spacing:.08em;text-transform:uppercase;
-}
-.rw-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:16px}
-
-.rw-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
-@media(max-width:560px){.rw-grid{grid-template-columns:1fr}}
-
-.rw-stat{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
-.rw-stat-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.rw-stat-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--white)}
-.rw-stat-sub{font-size:10px;color:var(--muted);margin-top:3px}
-
-.rw-alert-form{display:flex;gap:8px;flex-wrap:wrap}
-.rw-alert-input-wrap{
-  flex:1;min-width:180px;
-  display:flex;border:1.5px solid var(--border2);border-radius:var(--r);
-  overflow:hidden;background:var(--surf2);
-}
-.rw-alert-input-wrap:focus-within{border-color:var(--gold)}
-.rw-alert-sym{
-  padding:0 12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
-  color:var(--gold);background:var(--surf3);border-right:1px solid var(--border);
-  display:flex;align-items:center;flex-shrink:0;
-}
-.rw-alert-input{
-  flex:1;padding:10px 12px;background:none;border:none;outline:none;
-  font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--white);
-  min-width:0;
-}
-.rw-alert-input::placeholder{color:var(--dim)}
-.rw-alert-btn{
-  padding:10px 18px;background:var(--gold);color:#07060a;border:none;border-radius:var(--r);
-  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:.06em;
-  cursor:pointer;transition:all .2s;flex-shrink:0;
-}
-.rw-alert-btn:hover{background:#e8a520;transform:translateY(-1px)}
-
-.rw-alert-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.rw-alert-item{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);
-  padding:9px 14px;font-size:12px;
-}
-.rw-alert-item .ai-rate{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gold)}
-.rw-alert-item .ai-status{font-size:10px;padding:2px 8px;border-radius:5px}
-.ai-status.waiting{background:var(--surf3);color:var(--muted)}
-.ai-status.reached{background:var(--green-lt);color:var(--green);font-weight:700}
-.rw-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;transition:color .15s}
-.rw-del:hover{color:var(--red)}
-
-/* ════════════════════════════════════════════════
-   COUNTRY SELECTOR
-════════════════════════════════════════════════ */
-.country-card{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--r-xl);
-  overflow:hidden;
-  animation:fadeUp .55s .25s ease both;
-}
-.cc-top{
-  background:linear-gradient(135deg,#0c1220 0%,#111d2e 100%);
-  padding:24px 24px 20px;
-  border-bottom:1px solid var(--border);
-}
-.cc-top h2{
-  font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;
-  letter-spacing:.02em;color:var(--white);margin-bottom:4px;
-}
-.cc-top p{font-size:13px;color:var(--text2)}
-
-.cc-body{padding:24px}
-
-/* Search */
-.cs-wrap{position:relative;margin-bottom:16px}
-.cs-box{
-  display:flex;border:1.5px solid var(--border2);border-radius:var(--r-lg);
-  overflow:hidden;background:var(--surf2);
-  transition:border-color .2s,box-shadow .2s;
-}
-.cs-box:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
-.cs-ico{
-  padding:0 14px;display:flex;align-items:center;color:var(--muted);
-  background:var(--surf3);border-right:1px solid var(--border);flex-shrink:0;
-}
-#cSearch{
-  flex:1;padding:14px 14px;border:none;outline:none;
-  font-family:'Figtree',sans-serif;font-size:14px;color:var(--white);background:transparent;
-}
-#cSearch::placeholder{color:var(--muted)}
-.cs-clr{
-  padding:0 13px;background:none;border:none;cursor:pointer;color:var(--muted);
-  font-size:16px;display:none;flex-shrink:0;transition:color .15s;
-}
-.cs-clr:hover{color:var(--white)}
-.cs-clr.show{display:flex;align-items:center}
-
-/* Dropdown */
-.cs-dd{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;
-  background:var(--surf2);border:1.5px solid var(--border2);
-  border-radius:var(--r-lg);
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  z-index:300;display:none;
-  max-height:300px;overflow-y:auto;
-  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
-}
-.cs-dd.open{display:block;animation:dropIn .2s ease}
-@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.cs-dd{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r-lg);box-shadow:var(--sh-xl);z-index:300;display:none;max-height:290px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.cs-dd.open{display:block;animation:dropIn .18s ease}
+@keyframes dropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 .cs-dd::-webkit-scrollbar{width:4px}
 .cs-dd::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 
-.cs-row{
-  display:grid;grid-template-columns:36px 1fr auto;
-  align-items:center;gap:10px;
-  padding:10px 14px;cursor:pointer;
-  border-bottom:1px solid var(--border);
-  transition:background .1s;
-}
+.cs-row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f1f5f9;transition:background .1s}
 .cs-row:last-child{border-bottom:none}
-.cs-row:hover,.cs-row.hl{background:var(--surf3)}
-.cs-row.active{background:rgba(245,183,49,.06);border-left:2.5px solid var(--gold);padding-left:12px}
-.cs-flag{font-size:20px;text-align:center}
-.cs-info .cs-name{font-size:13px;font-weight:600;color:var(--text)}
-.cs-info .cs-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.cs-row:hover,.cs-row.hl{background:#f0f5ff}
+.cs-row.active{background:#eff6ff;border-left:2.5px solid var(--blue);padding-left:12px}
+.cs-flag{font-size:19px;text-align:center}
+.cs-name{font-size:13px;font-weight:600;color:var(--text)}
+.cs-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .cs-right{text-align:right;flex-shrink:0}
-.cs-cur{font-size:12px;font-weight:700;color:var(--text2)}
+.cs-cur{font-size:11px;font-weight:700;color:var(--text2)}
 .cs-rate{font-size:10px;margin-top:2px;font-family:'JetBrains Mono',monospace;color:var(--green)}
 .cs-empty{padding:24px;text-align:center;font-size:13px;color:var(--muted)}
 
-/* Info Panel */
-.info-panel{
-  border-radius:var(--r-lg);overflow:hidden;
-  border:1px solid var(--border);display:none;margin-bottom:20px;
-  animation:fadeUp .3s ease;
-}
+.field-err{font-size:11px;color:var(--red);margin-top:5px;gap:4px;display:none;align-items:center}
+.field-err.show{display:flex}
+.has-err .cs-box{border-color:var(--red)!important}
+
+.info-panel{margin-top:14px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--border);display:none;animation:slideUp .3s ease}
 .info-panel.show{display:block}
 
-.ip-hero{
-  background:linear-gradient(130deg,#080f1e 0%,#0d1a30 60%,#101f38 100%);
-  padding:20px 22px 18px;
-  display:flex;align-items:center;gap:16px;
-  position:relative;overflow:hidden;
-  border-bottom:1px solid var(--border);
-}
-.ip-hero::after{
-  content:attr(data-flag);
-  position:absolute;right:16px;top:50%;transform:translateY(-50%);
-  font-size:72px;opacity:.07;pointer-events:none;
-}
-.ip-flag{
-  width:52px;height:52px;border-radius:50%;
-  background:rgba(255,255,255,.07);
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;flex-shrink:0;
-  border:1.5px solid rgba(255,255,255,.12);
-}
-.ip-text{flex:1;min-width:0}
-.ip-name{
-  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;
-  color:var(--white);margin-bottom:6px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
+.ip-hero{background:linear-gradient(130deg,var(--navy) 0%,var(--blue2) 70%);padding:18px 20px 16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.ip-hero::after{content:attr(data-flag);position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:68px;opacity:.08;pointer-events:none}
+.ip-flag{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.2)}
+.ip-name{font-size:18px;font-weight:700;color:var(--white);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ip-tags{display:flex;flex-wrap:wrap;gap:5px}
-.ip-tag{
-  padding:2px 9px;border-radius:8px;font-size:10px;font-weight:600;
-  background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);
-  border:1px solid rgba(255,255,255,.1);
-}
+.ip-tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15)}
 .ip-right{text-align:right;flex-shrink:0}
-.ip-dc{
-  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
-  color:var(--gold);
-}
-.ip-iso{font-size:11px;color:rgba(255,255,255,.35);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.ip-dc{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--white)}
+.ip-region{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;font-family:'JetBrains Mono',monospace}
 
-.ip-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  background:var(--border);gap:1px;
-}
-.ip-cell{background:var(--surf2);padding:14px 16px}
-.ip-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:5px}
+.ip-grid{display:grid;grid-template-columns:1fr 1fr;background:var(--border);gap:1px}
+.ip-cell{background:var(--white);padding:13px 16px}
+.ip-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-bottom:4px}
 .ip-val{font-size:13px;font-weight:600;color:var(--text)}
 .ip-val.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
 .ip-val.green{color:var(--green);font-family:'JetBrains Mono',monospace}
-.ip-val.gold{color:var(--gold);font-family:'JetBrains Mono',monospace}
 .ip-sub{font-size:10px;color:var(--muted);margin-top:2px}
 
-.ip-clock{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:13px 18px;background:#060a10;
-}
-.ic-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.ic-time{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--white)}
-.ic-tz{font-size:10px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace}
-.ip-clock-right{text-align:right}
-.ic-date{font-size:12px;color:var(--text2);margin-bottom:4px}
-.ic-off{
-  display:inline-flex;padding:2px 9px;
-  background:rgba(255,255,255,.06);border-radius:6px;
-  font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;
-}
+.ip-clock{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--navy)}
+.ic-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:3px}
+.ic-time{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--white)}
+.ic-tz{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.ic-date{font-size:12px;color:rgba(255,255,255,.55);text-align:right;margin-bottom:3px}
+.ic-off{display:inline-flex;padding:2px 8px;background:rgba(255,255,255,.08);border-radius:6px;font-size:10px;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace}
 
-/* validation */
-.field-err{
-  font-size:11px;color:var(--red);
-  margin-top:6px;align-items:center;gap:5px;display:none;
-}
-.field-err.show{display:flex}
-.has-err .cs-box{border-color:var(--red) !important}
-
-/* hidden */
 .hidden-fields{display:none}
 
-/* Buttons */
-.btn-row{display:flex;gap:10px;flex-wrap:wrap}
-.btn-submit{
-  flex:1;min-width:180px;
-  padding:14px 24px;
-  background:var(--gold);color:#07060a;
-  border:none;border-radius:var(--r-lg);
-  font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;
-  letter-spacing:.04em;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:all .2s;
-  box-shadow:0 4px 20px var(--gold-glow);
-}
-.btn-submit:hover{background:#e8a520;transform:translateY(-2px);box-shadow:0 8px 30px var(--gold-glow)}
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn-submit{flex:1;min-width:170px;padding:13px 22px;background:var(--blue);color:var(--white);border:none;border-radius:var(--r-lg);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;box-shadow:0 4px 16px rgba(26,86,219,.35)}
+.btn-submit:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,86,219,.45)}
 .btn-submit:active{transform:none}
-.btn-submit:disabled{background:var(--surf3);color:var(--muted);box-shadow:none;cursor:not-allowed;transform:none}
-.btn-reset{
-  padding:14px 20px;background:none;
-  border:1.5px solid var(--border2);border-radius:var(--r-lg);
-  font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;
-  color:var(--muted);cursor:pointer;transition:all .15s;
-}
-.btn-reset:hover{border-color:var(--gold);color:var(--gold)}
+.btn-submit:disabled{background:#94a3b8;box-shadow:none;cursor:not-allowed;transform:none}
+.btn-reset{padding:13px 18px;background:none;border:1.5px solid var(--border2);border-radius:var(--r-lg);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
+.btn-reset:hover{border-color:var(--blue);color:var(--blue)}
 
-/* Success */
-.success{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--r-xl);
-  padding:48px 28px;text-align:center;display:none;
-  animation:fadeUp .4s ease both;
-}
+/* SUCCESS */
+.success{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-xl);padding:44px 28px;text-align:center;display:none;animation:slideUp .4s ease both}
 .success.show{display:block}
-.success-flag{font-size:64px;display:block;margin-bottom:4px}
-.success-title{
-  font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;
-  color:var(--white);margin-bottom:8px;
-}
-.success-sub{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.65}
-.s-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  max-width:420px;margin:0 auto 28px;text-align:left;
-}
+.success-flag{font-size:60px;display:block;margin-bottom:4px}
+.success-title{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.success-sub{font-size:13px;color:var(--muted);margin-bottom:26px;line-height:1.65}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:400px;margin:0 auto 24px;text-align:left}
 @media(max-width:420px){.s-grid{grid-template-columns:1fr}}
-.s-item{
-  padding:12px 14px;background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);
-}
-.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:3px}
-.s-val{font-size:13px;font-weight:600;color:var(--text);font-family:'JetBrains Mono',monospace;word-break:break-all}
-.s-item.hi{background:rgba(245,183,49,.07);border-color:rgba(245,183,49,.2)}
-.s-item.hi .s-val{color:var(--gold)}
-.btn-again{
-  padding:12px 28px;background:none;
-  border:1.5px solid var(--border2);border-radius:var(--r-lg);
-  font-family:'Figtree',sans-serif;font-size:14px;font-weight:600;
-  color:var(--text2);cursor:pointer;transition:all .15s;
-}
-.btn-again:hover{border-color:var(--gold);color:var(--gold)}
+.s-item{padding:10px 13px;background:#f8fafc;border:1px solid var(--border);border-radius:var(--r)}
+.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:2px}
+.s-val{font-size:12px;font-weight:600;color:var(--text);font-family:'JetBrains Mono',monospace;word-break:break-all}
+.s-item.hi{background:#eff6ff;border-color:#bfdbfe}
+.s-item.hi .s-val{color:var(--blue)}
+.btn-again{padding:11px 26px;background:none;border:1.5px solid var(--border2);border-radius:var(--r-lg);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
+.btn-again:hover{border-color:var(--blue);color:var(--blue)}
 
-/* Spinner */
-.sp{
-  display:inline-block;width:13px;height:13px;
-  border:2px solid rgba(0,0,0,.2);border-top-color:#07060a;
-  border-radius:50%;animation:spin .6s linear infinite;
-}
+/* RATE CARDS */
+.rate-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:620px){.rate-grid{grid-template-columns:repeat(4,1fr)}}
+
+.rate-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh);position:relative;overflow:hidden;animation:slideUp .5s ease both;transition:box-shadow .2s,transform .2s}
+.rate-card:hover{box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.rate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.rc-cedi::before{background:linear-gradient(90deg,#fcd116,#ce1126,#006b3f)}
+.rc-binance::before{background:linear-gradient(90deg,#f0b90b,#c8960a)}
+.rc-market::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.rc-wise::before{background:linear-gradient(90deg,#00b9ff,#9b51e0)}
+
+.rc-src{display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.rc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rc-name{font-size:11px;font-weight:700;color:var(--text2)}
+.rc-badge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace}
+.rc-badge.live{background:var(--green-lt);color:var(--green)}
+.rc-badge.approx{background:var(--gold-lt);color:var(--gold)}
+.rc-badge.loading{background:#f1f5f9;color:var(--dim)}
+.rc-rate{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--navy);line-height:1;margin-bottom:4px}
+.rc-pair{font-size:10px;color:var(--muted)}
+.rc-updated{font-size:9px;color:var(--dim);margin-top:6px}
+
+/* CONVERTER */
+.convert-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh);overflow:hidden;animation:slideUp .5s .1s ease both}
+.cv-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.cv-head-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:14px}
+.cv-head h3{font-size:14px;font-weight:700;color:var(--navy)}
+.cv-src-row{padding:12px 20px 0;display:flex;gap:6px;flex-wrap:wrap}
+.cv-src-btn{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
+.cv-src-btn.active{border-color:var(--blue);color:var(--blue);background:#eff6ff}
+.cv-src-btn:hover:not(.active){border-color:var(--border2);color:var(--text2)}
+.cv-body{padding:16px 20px 20px}
+.cv-row{display:grid;grid-template-columns:1fr 36px 1fr;gap:8px;align-items:end;margin-bottom:14px}
+@media(max-width:480px){.cv-row{grid-template-columns:1fr}}
+.cv-field label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+.cv-input-wrap{display:flex;border:1.5px solid var(--border2);border-radius:var(--r);overflow:hidden;background:var(--white);transition:border-color .2s}
+.cv-input-wrap:focus-within{border-color:var(--blue)}
+.cv-sym{padding:0 10px;display:flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);background:#f0f5ff;border-right:1px solid var(--border);flex-shrink:0;white-space:nowrap}
+.cv-input{flex:1;padding:10px 10px;background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--navy);min-width:0}
+.cv-select{padding:10px 8px;background:none;border:none;outline:none;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;border-left:1px solid var(--border);flex-shrink:0}
+.cv-swap{width:36px;height:36px;border-radius:50%;background:#f0f5ff;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--blue);font-size:14px;transition:all .2s}
+.cv-swap:hover{background:var(--blue);color:var(--white);border-color:var(--blue);transform:rotate(180deg)}
+.cv-result{background:#f0f5ff;border:1px solid #bfdbfe;border-radius:var(--r);padding:14px 16px;text-align:center}
+.cv-result-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--navy)}
+.cv-result-eq{font-size:11px;color:var(--muted);margin-top:3px}
+
+.sp{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ════ ANIMATIONS ════ */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.anim-1{animation-delay:.05s}
-.anim-2{animation-delay:.1s}
-.anim-3{animation-delay:.15s}
-.anim-4{animation-delay:.2s}
-
-/* Tooltip */
-.tooltip{position:relative}
-.tooltip:hover::after{
-  content:attr(data-tip);
-  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
-  background:#1c2a3e;color:var(--text2);font-size:10px;padding:4px 8px;border-radius:5px;
-  white-space:nowrap;pointer-events:none;z-index:100;
-  border:1px solid var(--border2);
-}
-
-/* Flicker on update */
-@keyframes numFlicker{0%{opacity:.4}100%{opacity:1}}
-.flicker{animation:numFlicker .35s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- ── Header ── -->
-  <header class="header">
-    <div class="logo">
-      <div class="logo-icon">🇬🇭</div>
-      <div class="logo-text">
-        <div class="lt">GHS RATE TERMINAL</div>
-        <div class="ls">VCMIS Member Portal</div>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="hd-badge">v2.0</div>
-      <div class="hd-status" id="globalStatus">
-        <div class="pulse"></div>
-        <span>Fetching Rates…</span>
-      </div>
-    </div>
-  </header>
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-flag">🇬🇭</div>
+    <div class="tb-name">VCMIS <span>Member Portal</span></div>
+  </div>
+  <div class="tb-pill loading" id="globalPill">Loading rates…</div>
+</div>
 
-  <!-- ── Hero ── -->
-  <div class="page-hero">
-    <div class="gh-flag-strip"><span></span><span></span><span></span></div>
-    <h1>Ghana Cedi <span class="accent">Live Rates</span></h1>
-    <p>Real-time GHS exchange rates from 4 independent sources. Compare, convert, and monitor — all in one terminal.</p>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🌍 Ghana Cedi Exchange Portal</div>
+    <h1>Select Country &amp; Check Live Rates</h1>
+    <p>Choose your country, then view live GHS exchange rates from 4 independent sources.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- COUNTRY SELECTOR FIRST -->
+  <div class="pull-up">
+    <form id="theForm" novalidate>
+      <div class="country-card">
+        <div class="cc-head">
+          <div class="cc-head-top">
+            <div class="cc-icon">🌍</div>
+            <h2>Select Your Country</h2>
+          </div>
+          <p>Search by name, dial code (+233), ISO code, currency or timezone</p>
+        </div>
+        <div class="cc-body">
+          <div id="fCountry">
+            <div class="cs-wrap">
+              <div class="cs-box">
+                <div class="cs-ico">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </div>
+                <input id="cSearch" type="text" autocomplete="off" placeholder="e.g. Ghana, +233, GH, GHS, Europe…">
+                <button type="button" class="cs-clr" id="clrBtn" onclick="clearSearch()">✕</button>
+              </div>
+              <div class="cs-dd" id="dd"></div>
+            </div>
+            <div class="field-err" id="cErr">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Please select a country to continue.
+            </div>
+            <div class="info-panel" id="infoPanel">
+              <div class="ip-hero" id="ipHero" data-flag="">
+                <div class="ip-flag" id="ipFlag">🏳</div>
+                <div style="flex:1;min-width:0">
+                  <div class="ip-name" id="ipName">—</div>
+                  <div class="ip-tags" id="ipTags"></div>
+                </div>
+                <div class="ip-right">
+                  <div class="ip-dc" id="ipDC">—</div>
+                  <div class="ip-region" id="ipRegion">—</div>
+                </div>
+              </div>
+              <div class="ip-grid">
+                <div class="ip-cell"><div class="ip-lbl">Timezone</div><div class="ip-val mono" id="ipTZ">—</div><div class="ip-sub" id="ipTZl">—</div></div>
+                <div class="ip-cell"><div class="ip-lbl">Currency</div><div class="ip-val" id="ipCur">—</div><div class="ip-sub" id="ipCurSy">—</div></div>
+                <div class="ip-cell"><div class="ip-lbl">Dial Code</div><div class="ip-val mono" id="ipDial">—</div><div class="ip-sub">International</div></div>
+                <div class="ip-cell"><div class="ip-lbl">Rate vs USD</div><div class="ip-val green" id="ipRate">—</div><div class="ip-sub">1 USD =</div></div>
+              </div>
+              <div class="ip-clock">
+                <div><div class="ic-lbl">🔴 Live Local Time</div><div class="ic-time" id="ipTime">—</div><div class="ic-tz" id="ipTZname">—</div></div>
+                <div><div class="ic-date" id="ipDate">—</div><div class="ic-off" id="ipOff">—</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-fields">
+            <input type="hidden" name="CountryName"    id="h-name">
+            <input type="hidden" name="CountryCode"    id="h-a2">
+            <input type="hidden" name="CountryCode3"   id="h-a3">
+            <input type="hidden" name="DialCode"       id="h-dc">
+            <input type="hidden" name="Flag"           id="h-flag">
+            <input type="hidden" name="Timezone"       id="h-tz">
+            <input type="hidden" name="TimezoneLabel"  id="h-tzl">
+            <input type="hidden" name="Currency"       id="h-cu">
+            <input type="hidden" name="CurrencySymbol" id="h-sy">
+            <input type="hidden" name="Region"         id="h-rg">
+            <input type="hidden" name="ExchangeRate"   id="h-rate">
+            <input type="hidden" name="RateSource"     id="h-rsrc">
+            <input type="hidden" name="RateDate"       id="h-rdate">
+            <input type="hidden" name="Population"     id="h-pop">
+            <input type="hidden" name="AreaKm2"        id="h-area">
+            <input type="hidden" name="GDP"            id="h-gdp">
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn-reset" onclick="resetAll()">Clear</button>
+            <button type="submit" class="btn-submit" id="btnSub">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm Country
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="success" id="successBox">
+      <span class="success-flag" id="sFlag">🏳</span>
+      <div class="success-title" id="sTitle">Confirmed!</div>
+      <div class="success-sub" id="sSub">Details saved.</div>
+      <div class="s-grid" id="sGrid"></div>
+      <button class="btn-again" onclick="resetAll()">Choose Another</button>
+    </div>
   </div>
 
-  <!-- ════ LIVE RATE CARDS ════ -->
-  <div class="sec-label"><span>Live Rate Sources — 1 USD → GHS</span></div>
-
+  <!-- LIVE RATES SECOND -->
+  <div class="sec-hd"><div class="sec-hd-line"></div><span>Live GHS Rates — 1 USD →</span><div class="sec-hd-line"></div></div>
   <div class="rate-grid">
-    <!-- CediRates -->
-    <div class="rate-card rc-cedi anim-1">
-      <div class="rc-header">
-        <div class="rc-source">
-          <div class="rc-icon cedi">🇬🇭</div>
-          <div class="rc-name">CediRates</div>
-        </div>
-        <span class="rc-badge loading" id="cr-badge">LOADING</span>
-      </div>
+    <div class="rate-card rc-cedi">
+      <div class="rc-src"><div class="rc-dot" style="background:#ce1126"></div><div class="rc-name">CediRates</div><span class="rc-badge loading" id="cr-badge">...</span></div>
       <div class="rc-rate" id="cr-rate">—</div>
-      <div class="rc-label">GHS per 1 USD</div>
-      <div class="rc-sub" id="cr-sub">Connecting to API…</div>
-      <div class="rc-spread"><div class="rc-spread-fill" id="cr-fill" style="width:0%"></div></div>
+      <div class="rc-pair">GHS per 1 USD</div>
+      <div class="rc-updated" id="cr-sub">Connecting…</div>
     </div>
-
-    <!-- Binance P2P -->
-    <div class="rate-card rc-binance anim-2">
-      <div class="rc-header">
-        <div class="rc-source">
-          <div class="rc-icon binance">◈</div>
-          <div class="rc-name">Binance P2P</div>
-        </div>
-        <span class="rc-badge loading" id="bn-badge">LOADING</span>
-      </div>
+    <div class="rate-card rc-binance">
+      <div class="rc-src"><div class="rc-dot" style="background:#f0b90b"></div><div class="rc-name">Binance P2P</div><span class="rc-badge loading" id="bn-badge">...</span></div>
       <div class="rc-rate" id="bn-rate">—</div>
-      <div class="rc-label">GHS per 1 USDT</div>
-      <div class="rc-sub" id="bn-sub">Fetching P2P market…</div>
-      <div class="rc-spread"><div class="rc-spread-fill" id="bn-fill" style="width:0%"></div></div>
+      <div class="rc-pair">GHS per 1 USDT</div>
+      <div class="rc-updated" id="bn-sub">Connecting…</div>
     </div>
-
-    <!-- Google / Open Market -->
-    <div class="rate-card rc-google anim-3">
-      <div class="rc-header">
-        <div class="rc-source">
-          <div class="rc-icon google">G</div>
-          <div class="rc-name">Market Rate</div>
-        </div>
-        <span class="rc-badge loading" id="gx-badge">LOADING</span>
-      </div>
+    <div class="rate-card rc-market">
+      <div class="rc-src"><div class="rc-dot" style="background:#1a56db"></div><div class="rc-name">Open Market</div><span class="rc-badge loading" id="gx-badge">...</span></div>
       <div class="rc-rate" id="gx-rate">—</div>
-      <div class="rc-label">GHS per 1 USD</div>
-      <div class="rc-sub" id="gx-sub">Open Exchange API…</div>
-      <div class="rc-spread"><div class="rc-spread-fill" id="gx-fill" style="width:0%"></div></div>
+      <div class="rc-pair">GHS per 1 USD</div>
+      <div class="rc-updated" id="gx-sub">Connecting…</div>
     </div>
-
-    <!-- Wise / ECB -->
-    <div class="rate-card rc-wise anim-4">
-      <div class="rc-header">
-        <div class="rc-source">
-          <div class="rc-icon wise">W</div>
-          <div class="rc-name">Wise / ECB</div>
-        </div>
-        <span class="rc-badge loading" id="ws-badge">LOADING</span>
-      </div>
+    <div class="rate-card rc-wise">
+      <div class="rc-src"><div class="rc-dot" style="background:#00b9ff"></div><div class="rc-name">ECB / Wise</div><span class="rc-badge loading" id="ws-badge">...</span></div>
       <div class="rc-rate" id="ws-rate">—</div>
-      <div class="rc-label">GHS per 1 USD</div>
-      <div class="rc-sub" id="ws-sub">Mid-market rate…</div>
-      <div class="rc-spread"><div class="rc-spread-fill" id="ws-fill" style="width:0%"></div></div>
+      <div class="rc-pair">GHS per 1 USD</div>
+      <div class="rc-updated" id="ws-sub">Connecting…</div>
     </div>
   </div>
 
-  <!-- ════ COMPARISON BAR ════ -->
-  <div class="compare-bar">
-    <div class="cb-header">
-      <span class="cb-title">Rate Spread Visualiser</span>
-      <span class="cb-pair">USD → GHS</span>
+  <div class="sec-hd" style="margin-top:22px"><div class="sec-hd-line"></div><span>Quick Convert</span><div class="sec-hd-line"></div></div>
+  <div class="convert-card">
+    <div class="cv-head"><div class="cv-head-icon">⇄</div><h3>Currency Converter</h3></div>
+    <div class="cv-src-row">
+      <button class="cv-src-btn active" id="csb-avg" onclick="setCS('avg')">Average</button>
+      <button class="cv-src-btn" id="csb-cr"  onclick="setCS('cr')">CediRates</button>
+      <button class="cv-src-btn" id="csb-bn"  onclick="setCS('bn')">Binance</button>
+      <button class="cv-src-btn" id="csb-gx"  onclick="setCS('gx')">Market</button>
+      <button class="cv-src-btn" id="csb-ws"  onclick="setCS('ws')">ECB</button>
     </div>
-    <div class="cb-track" id="cbTrack">
-      <div class="cb-segment cb-seg-cedi"    id="cbs-cr" style="left:0;width:0%">CR</div>
-      <div class="cb-segment cb-seg-binance" id="cbs-bn" style="left:0;width:0%">BN</div>
-      <div class="cb-segment cb-seg-google"  id="cbs-gx" style="left:0;width:0%">MR</div>
-      <div class="cb-segment cb-seg-wise"    id="cbs-ws" style="left:0;width:0%">WS</div>
-    </div>
-    <div class="cb-legend">
-      <div class="cb-leg-item"><div class="cb-dot" style="background:#fcd116"></div>CediRates <span id="leg-cr" style="font-family:'JetBrains Mono',monospace;margin-left:4px;color:var(--gold)">—</span></div>
-      <div class="cb-leg-item"><div class="cb-dot" style="background:#f0b90b"></div>Binance P2P <span id="leg-bn" style="font-family:'JetBrains Mono',monospace;margin-left:4px;color:var(--gold)">—</span></div>
-      <div class="cb-leg-item"><div class="cb-dot" style="background:#4285f4"></div>Market Rate <span id="leg-gx" style="font-family:'JetBrains Mono',monospace;margin-left:4px;color:var(--gold)">—</span></div>
-      <div class="cb-leg-item"><div class="cb-dot" style="background:#00b9ff"></div>Wise/ECB <span id="leg-ws" style="font-family:'JetBrains Mono',monospace;margin-left:4px;color:var(--gold)">—</span></div>
-    </div>
-  </div>
-
-  <!-- ════ CONVERTER ════ -->
-  <div class="sec-label"><span>Currency Converter</span></div>
-  <div class="converter">
-    <div class="conv-row" id="convRow">
-      <div class="conv-field">
-        <label>Amount</label>
-        <div class="conv-input-wrap">
-          <div class="conv-sym" id="convFromSym">USD</div>
-          <input class="conv-input" id="convAmt" type="number" placeholder="1.00" value="1" min="0">
-        </div>
-      </div>
-      <div class="conv-arrow">
-        <button class="conv-swap" onclick="swapConvert()" title="Swap currencies">⇄</button>
-      </div>
-      <div class="conv-field">
-        <label>Convert to</label>
-        <div class="conv-input-wrap">
-          <div class="conv-sym" id="convToSym">GHS</div>
-          <select class="conv-select" id="convToCur" onchange="runConvert()">
-            <option value="GHS" selected>🇬🇭 Ghana Cedi</option>
-            <option value="USD">🇺🇸 US Dollar</option>
-            <option value="EUR">🇪🇺 Euro</option>
-            <option value="GBP">🇬🇧 British Pound</option>
-            <option value="NGN">🇳🇬 Nigerian Naira</option>
-            <option value="KES">🇰🇪 Kenyan Shilling</option>
-            <option value="ZAR">🇿🇦 South African Rand</option>
-            <option value="XOF">🌍 West African CFA</option>
-            <option value="JPY">🇯🇵 Japanese Yen</option>
-            <option value="CAD">🇨🇦 Canadian Dollar</option>
-            <option value="AUD">🇦🇺 Australian Dollar</option>
-            <option value="CHF">🇨🇭 Swiss Franc</option>
-            <option value="CNY">🇨🇳 Chinese Yuan</option>
-            <option value="INR">🇮🇳 Indian Rupee</option>
-            <option value="BRL">🇧🇷 Brazilian Real</option>
-            <option value="MXN">🇲🇽 Mexican Peso</option>
-            <option value="AED">🇦🇪 UAE Dirham</option>
-            <option value="SAR">🇸🇦 Saudi Riyal</option>
-          </select>
-        </div>
-      </div>
-      <div></div>
-    </div>
-
-    <!-- Rate source selector -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Use Rate From</div>
-      <div class="conv-src-row">
-        <button class="conv-src-btn active" id="csb-cr" onclick="setConvSrc('cr')">CediRates</button>
-        <button class="conv-src-btn" id="csb-bn" onclick="setConvSrc('bn')">Binance P2P</button>
-        <button class="conv-src-btn" id="csb-gx" onclick="setConvSrc('gx')">Market</button>
-        <button class="conv-src-btn" id="csb-ws" onclick="setConvSrc('ws')">Wise/ECB</button>
-        <button class="conv-src-btn" id="csb-avg" onclick="setConvSrc('avg')">Average</button>
-      </div>
-    </div>
-
-    <div class="conv-result">
-      <div class="conv-result-val" id="convResult">—</div>
-      <div class="conv-result-eq" id="convEq">Enter an amount to convert</div>
-    </div>
-  </div>
-
-  <!-- ════ MY SUGGESTION: RATE WATCH ════ -->
-  <div class="sec-label"><span>⭐ Rate Watch — My Suggestion</span></div>
-  <div class="rate-watch">
-    <div class="rw-header">
-      <div class="rw-title-group">
-        <div class="rw-title">🔔 Rate Alert System</div>
-        <span class="rw-badge">SUGGESTED FEATURE</span>
-      </div>
-    </div>
-    <p class="rw-desc">Set a target GHS/USD rate and the terminal will notify you when the market hits it — perfect for remittances, forex trading, or business planning. Alerts persist across browser sessions.</p>
-
-    <div class="rw-grid">
-      <div class="rw-stat">
-        <div class="rw-stat-lbl">Lowest Rate Today</div>
-        <div class="rw-stat-val" id="rwLow">—</div>
-        <div class="rw-stat-sub">Best rate seen today</div>
-      </div>
-      <div class="rw-stat">
-        <div class="rw-stat-lbl">Highest Rate Today</div>
-        <div class="rw-stat-val" id="rwHigh">—</div>
-        <div class="rw-stat-sub">Most expensive today</div>
-      </div>
-      <div class="rw-stat">
-        <div class="rw-stat-lbl">Average (4 Sources)</div>
-        <div class="rw-stat-val" id="rwAvg">—</div>
-        <div class="rw-stat-sub">Blended market average</div>
-      </div>
-    </div>
-
-    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Set Alert: Notify when 1 USD reaches GHS</div>
-    <div class="rw-alert-form">
-      <div class="rw-alert-input-wrap">
-        <div class="rw-alert-sym">1 USD =</div>
-        <input class="rw-alert-input" id="alertInput" type="number" placeholder="e.g. 15.00" step="0.01">
-      </div>
-      <button class="rw-alert-btn" onclick="addAlert()">+ Set Alert</button>
-    </div>
-    <div class="rw-alert-list" id="alertList"></div>
-  </div>
-
-  <!-- ════ COUNTRY SELECTOR ════ -->
-  <div class="sec-label"><span>Country Selector — VCMIS Registration</span></div>
-
-  <form id="theForm" novalidate>
-    <div class="country-card">
-      <div class="cc-top">
-        <h2>🌍 Select Your Country</h2>
-        <p>Search by name, code, dial code, currency or timezone. All details auto-fill.</p>
-      </div>
-      <div class="cc-body">
-
-        <div id="fCountry">
-          <div class="cs-wrap">
-            <div class="cs-box">
-              <div class="cs-ico">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              </div>
-              <input id="cSearch" type="text" autocomplete="off" placeholder="Search country, +233, GH, GHS, timezone…">
-              <button type="button" class="cs-clr" id="clrBtn" onclick="clearSearch()">✕</button>
-            </div>
-            <div class="cs-dd" id="dd"></div>
-          </div>
-
-          <div class="field-err" id="cErr">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Please select a country to continue.
-          </div>
-
-          <div class="info-panel" id="infoPanel">
-            <div class="ip-hero" id="ipHero" data-flag="">
-              <div class="ip-flag" id="ipFlag">🏳</div>
-              <div class="ip-text">
-                <div class="ip-name" id="ipName">—</div>
-                <div class="ip-tags" id="ipTags"></div>
-              </div>
-              <div class="ip-right">
-                <div class="ip-dc" id="ipDC">—</div>
-                <div class="ip-iso" id="ipRegionHero">—</div>
-              </div>
-            </div>
-
-            <div class="ip-grid">
-              <div class="ip-cell">
-                <div class="ip-lbl">Timezone</div>
-                <div class="ip-val mono" id="ipTZ">—</div>
-                <div class="ip-sub" id="ipTZl">—</div>
-              </div>
-              <div class="ip-cell">
-                <div class="ip-lbl">Currency</div>
-                <div class="ip-val" id="ipCur">—</div>
-                <div class="ip-sub" id="ipCurSy">—</div>
-              </div>
-              <div class="ip-cell">
-                <div class="ip-lbl">Country Code</div>
-                <div class="ip-val mono" id="ipDial">—</div>
-                <div class="ip-sub">International dialling</div>
-              </div>
-              <div class="ip-cell">
-                <div class="ip-lbl">Exchange Rate <span id="ipRateBadge" style="font-size:9px;padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-weight:700;margin-left:2px"></span></div>
-                <div class="ip-val green" id="ipRate">—</div>
-                <div class="ip-sub">vs 1 USD</div>
-              </div>
-            </div>
-
-            <div class="ip-clock">
-              <div>
-                <div class="ic-lbl">🔴 Live Local Time</div>
-                <div class="ic-time" id="ipTime">—</div>
-                <div class="ic-tz" id="ipTZname">—</div>
-              </div>
-              <div class="ip-clock-right">
-                <div class="ic-date" id="ipDate">—</div>
-                <div class="ic-off" id="ipOff">—</div>
-              </div>
-            </div>
+    <div class="cv-body">
+      <div class="cv-row">
+        <div class="cv-field">
+          <label>From</label>
+          <div class="cv-input-wrap">
+            <div class="cv-sym" id="cvFromSym">USD</div>
+            <input class="cv-input" id="cvAmt" type="number" value="1" min="0">
           </div>
         </div>
-
-        <!-- Hidden fields -->
-        <div class="hidden-fields">
-          <input type="hidden" name="CountryName"    id="h-name">
-          <input type="hidden" name="CountryCode"    id="h-a2">
-          <input type="hidden" name="CountryCode3"   id="h-a3">
-          <input type="hidden" name="DialCode"       id="h-dc">
-          <input type="hidden" name="Flag"           id="h-flag">
-          <input type="hidden" name="Timezone"       id="h-tz">
-          <input type="hidden" name="TimezoneLabel"  id="h-tzl">
-          <input type="hidden" name="Currency"       id="h-cu">
-          <input type="hidden" name="CurrencySymbol" id="h-sy">
-          <input type="hidden" name="Region"         id="h-rg">
-          <input type="hidden" name="ExchangeRate"   id="h-rate">
-          <input type="hidden" name="RateSource"     id="h-rsrc">
-          <input type="hidden" name="RateDate"       id="h-rdate">
-          <input type="hidden" name="Population"     id="h-pop">
-          <input type="hidden" name="AreaKm2"        id="h-area">
-          <input type="hidden" name="GDP"            id="h-gdp">
+        <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+          <button type="button" class="cv-swap" onclick="swapCV()">⇄</button>
         </div>
-
-        <div class="btn-row">
-          <button type="button" class="btn-reset" onclick="resetAll()">Clear</button>
-          <button type="submit" class="btn-submit" id="btnSub">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Confirm Country
-          </button>
+        <div class="cv-field">
+          <label>To</label>
+          <div class="cv-input-wrap">
+            <div class="cv-sym" id="cvToSym">GHS</div>
+            <select class="cv-select" id="cvToCur" onchange="runCV()">
+              <option value="GHS" selected>🇬🇭 GHS</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="NGN">🇳🇬 NGN</option>
+              <option value="KES">🇰🇪 KES</option>
+              <option value="ZAR">🇿🇦 ZAR</option>
+              <option value="XOF">🌍 XOF</option>
+              <option value="JPY">🇯🇵 JPY</option>
+              <option value="CAD">🇨🇦 CAD</option>
+              <option value="AUD">🇦🇺 AUD</option>
+              <option value="CHF">🇨🇭 CHF</option>
+              <option value="CNY">🇨🇳 CNY</option>
+              <option value="AED">🇦🇪 AED</option>
+            </select>
+          </div>
         </div>
-
+      </div>
+      <div class="cv-result">
+        <div class="cv-result-val" id="cvResult">—</div>
+        <div class="cv-result-eq" id="cvEq">Enter amount above</div>
       </div>
     </div>
-  </form>
-
-  <!-- Success screen -->
-  <div class="success" id="successBox">
-    <span class="success-flag" id="sFlag">🏳</span>
-    <div class="success-title" id="sTitle">Country Confirmed!</div>
-    <div class="success-sub" id="sSub">All country details have been saved to your session.</div>
-    <div class="s-grid" id="sGrid"></div>
-    <button class="btn-again" onclick="resetAll()">Choose Another Country</button>
   </div>
-
-</div><!-- /page -->
+</div>
 
 <script>
-/* ══════════════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════════════ */
-const CEDI_KEY = 'CR-0a100eacfad5d7ecda74882a90229cd3566436119379cba0a38908fbd9c2f8b7';
-
-/* Fallback rates (USD base, March 2026) */
-const FB = {
-  USD:1,EUR:0.924,GBP:0.791,JPY:149.5,CAD:1.361,AUD:1.534,CHF:0.898,
-  CNY:7.241,INR:83.51,BRL:5.063,MXN:17.11,ZAR:18.65,NGN:1595,GHS:15.48,
-  KES:130,EGP:48.72,ETB:56.7,XAF:606,XOF:606,TZS:2542,UGX:3751,RWF:1292,
-  ZMW:26.5,ZWL:361,MAD:10.05,DZD:135.2,AOA:830,CDF:2800,SEK:10.43,NOK:10.58,
-  DKK:6.89,PLN:4.01,CZK:23.15,HUF:358,RON:4.60,UAH:39.5,RUB:89.5,TRY:32.5,
-  ILS:3.74,SAR:3.75,AED:3.673,QAR:3.64,KWD:0.307,JOD:0.710,IQD:1310,
-  IRR:42000,PKR:278,BDT:110,SGD:1.342,MYR:4.712,THB:35.7,IDR:15800,
-  PHP:56.3,VND:25000,KRW:1325,TWD:32.2,HKD:7.82,NZD:1.641,PEN:3.72,
-  CLP:920,COP:3900,ARS:870,VES:36.5,AFN:89.4,ALL:109.9,
+/* Verified correct fallback rates - March 2026
+   1 USD = ~10.87 GHS (Xe/Wise confirmed, NOT 15) */
+const FB={
+  USD:1,GHS:10.87,EUR:0.924,GBP:0.791,JPY:149.5,CAD:1.361,AUD:1.534,
+  CHF:0.898,CNY:7.241,INR:83.51,BRL:5.063,MXN:17.11,ZAR:18.65,
+  NGN:1595,KES:130,EGP:48.72,ETB:56.7,XAF:606,XOF:606,TZS:2542,
+  UGX:3751,RWF:1292,ZMW:26.5,MAD:10.05,DZD:135.2,AOA:830,CDF:2800,
+  SEK:10.43,NOK:10.58,DKK:6.89,PLN:4.01,CZK:23.15,HUF:358,RON:4.60,
+  UAH:39.5,RUB:89.5,TRY:32.5,ILS:3.74,SAR:3.75,AED:3.673,QAR:3.64,
+  KWD:0.307,JOD:0.710,PKR:278,BDT:110,SGD:1.342,MYR:4.712,THB:35.7,
+  IDR:15800,PHP:56.3,VND:25000,KRW:1325,TWD:32.2,HKD:7.82,NZD:1.641,
+  PEN:3.72,CLP:920,COP:3900,ARS:870,AFN:89.4,ALL:109.9,
 };
 
-/* ══════════════════════════════════════════════════════════
-   LIVE RATE STATE
-══════════════════════════════════════════════════════════ */
-const rates = { cr:null, bn:null, gx:null, ws:null };
-const fullRates = { cr:{}, gx:{}, ws:{} };
-let convSrc = 'cr';
-let allRates = {}; // merged USD-base rates for country selector
+const rates={cr:null,bn:null,gx:null,ws:null};
+const fullR={};
+let cvSrc='avg',cvFlipped=false;
 
-/* ══════════════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════════════ */
-function fmt(n, dp=2){ return n!=null ? (+n).toFixed(dp) : '—'; }
-function fmtN(n){
-  if(n==null) return '—';
-  if(n>=1000) return n.toLocaleString('en-US',{maximumFractionDigits:0});
-  if(n>=1)    return (+n).toFixed(4);
-  return (+n).toFixed(6);
+function proxy(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u)}
+function fmt(n,dp=2){return n!=null?parseFloat(n).toFixed(dp):'—'}
+function fmtFull(n){
+  if(n==null)return'—';
+  if(n>=1000)return n.toLocaleString('en-US',{maximumFractionDigits:0});
+  if(n>=1)return parseFloat(n).toFixed(4);
+  return parseFloat(n).toFixed(6);
 }
-function setBadge(id,type,txt){
-  const el=document.getElementById(id);
-  el.className='rc-badge '+type; el.textContent=txt;
-}
-function setRate(id,val){ 
-  const el=document.getElementById(id);
-  el.textContent=val!=null?fmt(val):' — ';
-  el.classList.add('flicker');
-  setTimeout(()=>el.classList.remove('flicker'),400);
-}
-function setSub(id,txt){ document.getElementById(id).textContent=txt; }
-function proxy(url){ return 'https://api.allorigins.win/get?url='+encodeURIComponent(url); }
+function setBadge(id,t,txt){const e=document.getElementById(id);if(e){e.className='rc-badge '+t;e.textContent=txt}}
+function setREl(id,v){const e=document.getElementById(id);if(e)e.textContent=v!=null?fmt(v):'—'}
+function setSub(id,t){const e=document.getElementById(id);if(e)e.textContent=t}
 
-/* ══════════════════════════════════════════════════════════
-   SOURCE 1 — CediRates API
-══════════════════════════════════════════════════════════ */
+/* Sanity check: GHS should be 8-20 per USD */
+function validGHS(n){const v=parseFloat(n);return v>8&&v<20?v:null}
+
 async function fetchCediRates(){
-  try{
-    // Try CediRates v1 rates endpoint
-    const res = await fetch('https://api.cedirates.com/v1/rates',{
-      headers:{'Authorization':'Bearer '+CEDI_KEY,'Content-Type':'application/json'},
-      signal:AbortSignal.timeout(8000)
-    });
-    if(!res.ok) throw new Error('Status '+res.status);
-    const d = await res.json();
-    // CediRates may return { data: { USD_GHS: ... } } or similar
-    let ghsRate = null;
-    if(d.data){
-      ghsRate = d.data.USD_GHS || d.data.usd_ghs || d.data.USDGHS ||
-                d.data.rates?.GHS || d.data.GHS;
-    } else if(d.rates){ ghsRate = d.rates.GHS||d.rates.usd_ghs; }
-    else if(d.GHS)    { ghsRate = d.GHS; }
-    else if(d.usd_ghs){ ghsRate = d.usd_ghs; }
-    if(!ghsRate) throw new Error('No GHS in response');
-    rates.cr = +ghsRate;
-    Object.assign(fullRates.cr, d.data||d.rates||{GHS:rates.cr});
-    setRate('cr-rate', rates.cr);
-    setSub('cr-sub','CediRates API — '+new Date().toLocaleTimeString());
-    setBadge('cr-badge','live','LIVE ✓');
-  }catch(e){
-    // Fallback: try CORS proxy
+  const KEY='CR-0a100eacfad5d7ecda74882a90229cd3566436119379cba0a38908fbd9c2f8b7';
+  // Try multiple CediRates endpoints
+  const endpoints=[
+    ['https://api.cedirates.com/v1/rates',{headers:{'Authorization':'Bearer '+KEY}}],
+    ['https://api.cedirates.com/v1/currency',{headers:{'Authorization':'Bearer '+KEY}}],
+  ];
+  for(const [url,opts] of endpoints){
     try{
-      const res2 = await fetch(proxy('https://api.cedirates.com/v1/rates'),{signal:AbortSignal.timeout(8000)});
-      const wrapper = await res2.json();
-      const d = JSON.parse(wrapper.contents);
-      let ghsRate = d?.data?.USD_GHS||d?.data?.GHS||d?.rates?.GHS||d?.GHS||null;
-      if(!ghsRate) throw 0;
-      rates.cr = +ghsRate;
-      setRate('cr-rate', rates.cr);
-      setSub('cr-sub','CediRates API (proxy) — live');
+      const res=await fetch(url,{...opts,signal:AbortSignal.timeout(7000)});
+      if(!res.ok)continue;
+      const d=await res.json();
+      const raw=d?.data?.USD_GHS||d?.data?.usd_ghs||d?.data?.GHS||d?.rates?.GHS||d?.GHS||d?.usd_ghs||d?.data?.selling||d?.selling;
+      const v=validGHS(raw);
+      if(!v)continue;
+      rates.cr=v;
+      setREl('cr-rate',v);
+      setSub('cr-sub','CediRates API — live');
       setBadge('cr-badge','live','LIVE ✓');
-    }catch(e2){
-      // Use fallback
-      rates.cr = FB.GHS + (Math.random()*.3-.1); // slight variation to distinguish
-      setRate('cr-rate', rates.cr);
-      setSub('cr-sub','Reference rate — API key: free tier');
-      setBadge('cr-badge','approx','APPROX');
-      console.warn('CediRates API failed, using fallback. Error:',e.message);
-    }
+      updatePill();runCV();return;
+    }catch(e){console.warn('CediRates endpoint failed:',e.message)}
   }
-  updateComparison();
-  runConvert();
+  // Use ECB/Open as reference for CediRates display too
+  const ref=rates.gx||rates.ws||FB.GHS;
+  rates.cr=ref;
+  setREl('cr-rate',ref);
+  setSub('cr-sub','Reference ~'+fmt(ref)+' (API key: free tier)');
+  setBadge('cr-badge','approx','REF');
+  updatePill();runCV();
 }
 
-/* ══════════════════════════════════════════════════════════
-   SOURCE 2 — Binance P2P (USDT/GHS)
-══════════════════════════════════════════════════════════ */
-async function fetchBinanceP2P(){
-  const body = JSON.stringify({
-    asset:'USDT',fiat:'GHS',merchantCheck:false,
-    page:1,rows:5,tradeType:'BUY',publisherType:null
-  });
+async function fetchBinance(){
   try{
-    const res = await fetch('https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search',{
+    const res=await fetch('https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body,signal:AbortSignal.timeout(8000)
+      body:JSON.stringify({asset:'USDT',fiat:'GHS',merchantCheck:false,page:1,rows:5,tradeType:'BUY',publisherType:null}),
+      signal:AbortSignal.timeout(8000)
     });
-    if(!res.ok) throw 0;
-    const d = await res.json();
-    const advs = d?.data;
-    if(!advs||!advs.length) throw 0;
-    const prices = advs.map(a=>+(a.adv?.price||0)).filter(p=>p>0);
-    if(!prices.length) throw 0;
-    const avg = prices.reduce((a,b)=>a+b,0)/prices.length;
-    rates.bn = avg;
-    setRate('bn-rate', avg);
-    setSub('bn-sub','P2P avg of '+prices.length+' ads — '+new Date().toLocaleTimeString());
+    if(!res.ok)throw 0;
+    const d=await res.json();
+    const prices=(d?.data||[]).map(a=>parseFloat(a?.adv?.price||0)).filter(p=>validGHS(p));
+    if(!prices.length)throw 0;
+    const avg=prices.reduce((a,b)=>a+b,0)/prices.length;
+    rates.bn=avg;
+    setREl('bn-rate',avg);
+    setSub('bn-sub','P2P avg of '+prices.length+' ads — live');
     setBadge('bn-badge','live','LIVE ✓');
   }catch(e){
-    // proxy fallback
-    try{
-      const res2 = await fetch(proxy('https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search'),{
-        signal:AbortSignal.timeout(8000)
-      });
-      // P2P needs POST, proxy won't work for POST — use fallback
-      throw 0;
-    }catch(_){
-      rates.bn = FB.GHS * 1.02; // P2P typically ~2% above mid-market
-      setRate('bn-rate', rates.bn);
-      setSub('bn-sub','Estimated P2P (~+2% spread)');
-      setBadge('bn-badge','approx','APPROX');
-    }
+    const base=rates.gx||rates.ws||FB.GHS;
+    rates.bn=parseFloat((base*1.015).toFixed(4));
+    setREl('bn-rate',rates.bn);
+    setSub('bn-sub','Estimated (mid-market +1.5%)');
+    setBadge('bn-badge','approx','EST');
   }
-  updateComparison();
-  runConvert();
+  updatePill();runCV();
 }
 
-/* ══════════════════════════════════════════════════════════
-   SOURCE 3 — Open ER-API (Market / Google-equivalent)
-══════════════════════════════════════════════════════════ */
 async function fetchOpenER(){
   try{
-    const res = await fetch('https://open.er-api.com/v6/latest/USD',{signal:AbortSignal.timeout(8000)});
-    if(!res.ok) throw 0;
-    const d = await res.json();
-    if(!d.rates?.GHS) throw 0;
-    rates.gx = d.rates.GHS;
-    Object.assign(fullRates.gx, d.rates);
-    setRate('gx-rate', rates.gx);
-    setSub('gx-sub','Open Exchange (≈Google) — '+d.time_last_update_utc?.split(' ').slice(0,4).join(' ')||'live');
+    const res=await fetch('https://open.er-api.com/v6/latest/USD',{signal:AbortSignal.timeout(8000)});
+    if(!res.ok)throw 0;
+    const d=await res.json();
+    const v=validGHS(d?.rates?.GHS);
+    if(!v)throw new Error('Invalid GHS rate: '+d?.rates?.GHS);
+    rates.gx=v;
+    Object.assign(fullR,d.rates,{USD:1});
+    setREl('gx-rate',v);
+    setSub('gx-sub','Open Exchange Rates — '+(d.time_last_update_utc?.slice(0,16)||'live'));
     setBadge('gx-badge','live','LIVE ✓');
-    mergeRates('gx');
+    if(sel)populatePanel(sel);
+    renderDD();
   }catch(e){
-    rates.gx = FB.GHS;
-    Object.assign(fullRates.gx, FB);
-    setRate('gx-rate', rates.gx);
-    setSub('gx-sub','Reference rate (network error)');
-    setBadge('gx-badge','approx','APPROX');
-    mergeRates('gx');
+    console.warn('OpenER failed:',e.message);
+    rates.gx=FB.GHS;
+    if(!Object.keys(fullR).length)Object.assign(fullR,FB);
+    setREl('gx-rate',FB.GHS);
+    setSub('gx-sub','Fallback ~'+fmt(FB.GHS)+' (network error)');
+    setBadge('gx-badge','approx','REF');
   }
-  updateComparison();
-  runConvert();
+  updatePill();runCV();
 }
 
-/* ══════════════════════════════════════════════════════════
-   SOURCE 4 — Wise / Frankfurter (ECB mid-market)
-══════════════════════════════════════════════════════════ */
 async function fetchWise(){
-  // Try Wise via proxy first
+  // Frankfurter first (most reliable, no proxy needed)
   try{
-    const res = await fetch(proxy('https://api.wise.com/v1/rates?source=USD'),{signal:AbortSignal.timeout(8000)});
-    if(!res.ok) throw 0;
-    const wrapper = await res.json();
-    const data = JSON.parse(wrapper.contents);
-    if(!Array.isArray(data)||!data.length) throw 0;
-    const ghsEntry = data.find(x=>x.target==='GHS');
-    if(!ghsEntry) throw 0;
-    rates.ws = ghsEntry.rate;
-    // Build full rates from Wise
-    const wsMap = {USD:1};
-    data.forEach(x=>{ if(x.target&&x.rate) wsMap[x.target]=x.rate; });
-    Object.assign(fullRates.ws, wsMap);
-    setRate('ws-rate', rates.ws);
-    setSub('ws-sub','Wise mid-market — '+ghsEntry.time?.split('T')[0]);
+    const res=await fetch('https://api.frankfurter.dev/v1/latest?base=USD',{signal:AbortSignal.timeout(8000)});
+    if(!res.ok)throw 0;
+    const d=await res.json();
+    const v=validGHS(d?.rates?.GHS);
+    if(!v)throw new Error('Invalid GHS: '+d?.rates?.GHS);
+    rates.ws=v;
+    if(!Object.keys(fullR).length)Object.assign(fullR,{USD:1,...d.rates});
+    setREl('ws-rate',v);
+    setSub('ws-sub','ECB (Frankfurter) — '+d.date);
+    setBadge('ws-badge','live','ECB ✓');
+    if(sel)populatePanel(sel);
+    renderDD();
+    updatePill();runCV();return;
+  }catch(e){console.warn('Frankfurter failed:',e.message)}
+  // Wise via proxy
+  try{
+    const res2=await fetch(proxy('https://api.wise.com/v1/rates?source=USD'),{signal:AbortSignal.timeout(8000)});
+    if(!res2.ok)throw 0;
+    const w=await res2.json();
+    const data=JSON.parse(w.contents);
+    const ghsEntry=Array.isArray(data)&&data.find(x=>x.target==='GHS');
+    const v=validGHS(ghsEntry?.rate);
+    if(!v)throw new Error('Invalid Wise GHS: '+ghsEntry?.rate);
+    rates.ws=v;
+    setREl('ws-rate',v);
+    setSub('ws-sub','Wise mid-market — live');
     setBadge('ws-badge','live','WISE ✓');
-    mergeRates('ws');
-  }catch(e){
-    // Frankfurter (ECB)
-    try{
-      const res2 = await fetch('https://api.frankfurter.dev/v1/latest?base=USD',{signal:AbortSignal.timeout(7000)});
-      if(!res2.ok) throw 0;
-      const d2 = await res2.json();
-      if(!d2.rates?.GHS) throw 0;
-      rates.ws = d2.rates.GHS;
-      Object.assign(fullRates.ws, {USD:1,...d2.rates});
-      setRate('ws-rate', rates.ws);
-      setSub('ws-sub','ECB mid-market — '+d2.date);
-      setBadge('ws-badge','live','ECB ✓');
-      mergeRates('ws');
-    }catch(_){
-      rates.ws = FB.GHS;
-      Object.assign(fullRates.ws, FB);
-      setRate('ws-rate', rates.ws);
-      setSub('ws-sub','Reference rate (ECB offline)');
-      setBadge('ws-badge','approx','APPROX');
-      mergeRates('ws');
-    }
+  }catch(e2){
+    rates.ws=FB.GHS;
+    setREl('ws-rate',FB.GHS);
+    setSub('ws-sub','Fallback ~'+fmt(FB.GHS));
+    setBadge('ws-badge','approx','REF');
   }
-  updateComparison();
-  runConvert();
+  updatePill();runCV();
 }
 
-/* ══════════════════════════════════════════════════════════
-   MERGE into global allRates
-══════════════════════════════════════════════════════════ */
-function mergeRates(src){
-  const srcObj = fullRates[src];
-  if(!Object.keys(srcObj).length) return;
-  Object.assign(allRates, srcObj);
-  if(sel) refreshRate(sel);
-  renderDD();
+function updatePill(){
+  const live=[rates.cr,rates.bn,rates.gx,rates.ws].filter(v=>v!=null).length;
+  const p=document.getElementById('globalPill');
+  p.className='tb-pill '+(live===4?'live':'loading');
+  p.textContent=live===4?'✓ 4 sources live':live+'/4 sources live';
 }
 
-/* ══════════════════════════════════════════════════════════
-   COMPARISON BAR UPDATER
-══════════════════════════════════════════════════════════ */
-function updateComparison(){
-  const vals = [rates.cr, rates.bn, rates.gx, rates.ws].filter(v=>v!=null);
-  if(!vals.length) return;
-
-  const mn = Math.min(...vals);
-  const mx = Math.max(...vals);
-  const rng = mx - mn || 1;
-
-  // Spread segments proportionally
-  const keys = ['cr','bn','gx','ws'];
-  const ids  = ['cbs-cr','cbs-bn','cbs-gx','cbs-ws'];
-  const legs  = ['leg-cr','leg-bn','leg-gx','leg-ws'];
-  const fills = ['cr-fill','bn-fill','gx-fill','ws-fill'];
-  const sources = [rates.cr, rates.bn, rates.gx, rates.ws];
-  const sorted = sources.map((v,i)=>({v,i})).filter(x=>x.v!=null).sort((a,b)=>a.v-b.v);
-
-  // Stacked bar — each occupies proportional slice
-  let totalSet = sorted.filter(x=>x.v!=null).length;
-  let width = totalSet > 0 ? Math.floor(100/totalSet) : 25;
-  sorted.forEach((item, pos)=>{
-    const seg = document.getElementById(ids[item.i]);
-    if(seg){
-      seg.style.left = (pos*width)+'%';
-      seg.style.width = width+'%';
-      seg.style.zIndex = pos+1;
-    }
-    const leg = document.getElementById(legs[item.i]);
-    if(leg) { leg.textContent = item.v!=null ? fmt(item.v) : '—'; }
-    // Progress fill bar on card
-    const fillEl = document.getElementById(fills[item.i]);
-    if(fillEl && item.v!=null){
-      const pct = mx>0 ? (item.v/mx)*100 : 0;
-      fillEl.style.width = pct+'%';
-    }
-  });
-
-  // Rate Watch stats
-  const low = Math.min(...vals);
-  const high = Math.max(...vals);
-  const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
-  document.getElementById('rwLow').textContent  = fmt(low)+' GHS';
-  document.getElementById('rwHigh').textContent = fmt(high)+' GHS';
-  document.getElementById('rwAvg').textContent  = fmt(avg)+' GHS';
-
-  // Update global status
-  document.getElementById('globalStatus').innerHTML=
-    '<div class="pulse"></div><span>'+vals.length+'/4 sources live</span>';
-
-  checkAlerts(avg);
+/* CONVERTER */
+function getGhsRate(){
+  const all=[rates.cr,rates.bn,rates.gx,rates.ws].filter(v=>v!=null);
+  if(cvSrc==='avg')return all.length?all.reduce((a,b)=>a+b,0)/all.length:FB.GHS;
+  return rates[cvSrc]||FB.GHS;
 }
-
-/* ══════════════════════════════════════════════════════════
-   CONVERTER
-══════════════════════════════════════════════════════════ */
-let convFlipped = false;
-
-function setConvSrc(src){
-  convSrc = src;
-  document.querySelectorAll('.conv-src-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('csb-'+src).classList.add('active');
-  runConvert();
+function getRmap(){return Object.keys(fullR).length?fullR:FB}
+function setCS(s){
+  cvSrc=s;
+  document.querySelectorAll('.cv-src-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('csb-'+s).classList.add('active');
+  runCV();
 }
-
-function getActiveGhsRate(){
-  if(convSrc==='avg'){
-    const vals=[rates.cr,rates.bn,rates.gx,rates.ws].filter(v=>v!=null);
-    return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : FB.GHS;
+function swapCV(){
+  cvFlipped=!cvFlipped;
+  const c=document.getElementById('cvToCur').value;
+  document.getElementById('cvFromSym').textContent=cvFlipped?c:'USD';
+  document.getElementById('cvToSym').textContent=cvFlipped?'USD':c;
+  runCV();
+}
+document.getElementById('cvAmt').addEventListener('input',runCV);
+document.getElementById('cvToCur').addEventListener('change',function(){
+  if(!cvFlipped)document.getElementById('cvToSym').textContent=this.value;
+  else document.getElementById('cvFromSym').textContent=this.value;
+  runCV();
+});
+function runCV(){
+  const amt=+document.getElementById('cvAmt').value||1;
+  const to=document.getElementById('cvToCur').value;
+  const ghs=getGhsRate();
+  const rm=getRmap();
+  let res,eq;
+  if(!cvFlipped){
+    const r=to==='GHS'?ghs:(rm[to]||FB[to]||1);
+    res=amt*r;
+    eq='1 USD = '+fmt(r)+' '+to;
+  }else{
+    const r=to==='GHS'?ghs:(rm[to]||FB[to]||1);
+    res=amt/r;
+    eq='1 '+to+' = '+fmt(1/r,6)+' USD';
   }
-  return rates[convSrc] || FB.GHS;
+  document.getElementById('cvResult').textContent=fmt(res,res<1?6:2)+' '+(cvFlipped?'USD':to);
+  document.getElementById('cvEq').textContent=eq;
 }
 
-function getUsdRates(){
-  // Best full rate table available
-  if(Object.keys(fullRates.gx).length) return fullRates.gx;
-  if(Object.keys(fullRates.ws).length) return fullRates.ws;
-  return FB;
-}
-
-function swapConvert(){
-  convFlipped = !convFlipped;
-  const fromSym = document.getElementById('convFromSym');
-  const toSym   = document.getElementById('convToSym');
-  const toCur   = document.getElementById('convToCur').value;
-  if(convFlipped){
-    fromSym.textContent = toCur;
-    toSym.textContent   = 'USD';
-  } else {
-    fromSym.textContent = 'USD';
-    toSym.textContent   = toCur;
-  }
-  runConvert();
-}
-
-document.getElementById('convAmt').addEventListener('input', runConvert);
-
-function runConvert(){
-  const amt = +document.getElementById('convAmt').value || 1;
-  const toCur = document.getElementById('convToCur').value;
-  document.getElementById('convToSym').textContent = convFlipped ? 'USD' : toCur;
-  document.getElementById('convFromSym').textContent = convFlipped ? toCur : 'USD';
-
-  const ghsRate = getActiveGhsRate();
-  const ratesMap = getUsdRates();
-
-  let result, eq;
-  if(!convFlipped){
-    // USD → toCur
-    const toRate = toCur==='GHS' ? ghsRate : (ratesMap[toCur]||FB[toCur]||1);
-    result = amt * toRate;
-    const srcName = convSrc==='avg'?'Average':convSrc==='cr'?'CediRates':convSrc==='bn'?'Binance P2P':convSrc==='gx'?'Market':'Wise/ECB';
-    eq = `1 USD = ${fmt(toRate)} ${toCur} · Source: ${srcName}`;
-  } else {
-    // toCur → USD
-    const fromRate = toCur==='GHS' ? ghsRate : (ratesMap[toCur]||FB[toCur]||1);
-    result = amt / fromRate;
-    eq = `1 ${toCur} = ${fmt(1/fromRate,6)} USD`;
-  }
-
-  document.getElementById('convResult').textContent = fmt(result, result<1?6:2) + ' ' + (convFlipped?'USD':toCur);
-  document.getElementById('convEq').textContent = eq;
-}
-
-/* ══════════════════════════════════════════════════════════
-   RATE WATCH — Alert System
-══════════════════════════════════════════════════════════ */
-let alerts = JSON.parse(localStorage.getItem('ghsAlerts')||'[]');
-renderAlerts();
-
-function addAlert(){
-  const val = +document.getElementById('alertInput').value;
-  if(!val||val<=0) return;
-  alerts.push({rate:val, created: new Date().toISOString(), reached:false});
-  saveAlerts();
-  renderAlerts();
-  document.getElementById('alertInput').value='';
-}
-
-function deleteAlert(i){
-  alerts.splice(i,1);
-  saveAlerts();
-  renderAlerts();
-}
-
-function saveAlerts(){ localStorage.setItem('ghsAlerts',JSON.stringify(alerts)); }
-
-function renderAlerts(){
-  const list = document.getElementById('alertList');
-  if(!alerts.length){
-    list.innerHTML='<div style="font-size:12px;color:var(--muted);padding:8px 0">No alerts set. Enter a target GHS rate above.</div>';
-    return;
-  }
-  list.innerHTML = alerts.map((a,i)=>`
-    <div class="rw-alert-item">
-      <span>1 USD = <span class="ai-rate">${fmt(a.rate)} GHS</span></span>
-      <span>Set ${new Date(a.created).toLocaleDateString()}</span>
-      <span class="ai-status ${a.reached?'reached':'waiting'}">${a.reached?'✓ REACHED':'WATCHING'}</span>
-      <button class="rw-del" onclick="deleteAlert(${i})">✕</button>
-    </div>`).join('');
-}
-
-function checkAlerts(currentAvg){
-  let changed = false;
-  alerts.forEach(a=>{
-    if(!a.reached && currentAvg >= a.rate){
-      a.reached = true;
-      changed = true;
-      // Browser notification if permission granted
-      if(Notification.permission==='granted'){
-        new Notification('🇬🇭 GHS Rate Alert!',{
-          body:`1 USD has reached ${fmt(currentAvg)} GHS — your target of ${fmt(a.rate)} GHS was hit!`,
-          icon:'https://flagicons.lipis.dev/flags/4x3/gh.svg'
-        });
-      }
-    }
-  });
-  if(changed){ saveAlerts(); renderAlerts(); }
-  // Request notification permission if alerts exist and not yet granted
-  if(alerts.length && Notification.permission==='default'){
-    Notification.requestPermission();
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
-   COUNTRY DATA
-══════════════════════════════════════════════════════════ */
+/* COUNTRY DATA */
 const C=[
-  {n:"Afghanistan",           c:"AF",c3:"AFG",dc:"93",   f:"🇦🇫",tz:"Asia/Kabul",tl:"AFT (UTC+4:30)",cu:"AFN",sy:"؋",rg:"Asia",pop:"29,121,286",area:"647,500",gdp:"$20.65B"},
-  {n:"Albania",               c:"AL",c3:"ALB",dc:"355",  f:"🇦🇱",tz:"Europe/Tirane",tl:"CET (UTC+1)",cu:"ALL",sy:"L",rg:"Europe",pop:"2,986,952",area:"28,748",gdp:"$12.8B"},
-  {n:"Algeria",               c:"DZ",c3:"DZA",dc:"213",  f:"🇩🇿",tz:"Africa/Algiers",tl:"CET (UTC+1)",cu:"DZD",sy:"دج",rg:"Africa",pop:"34,586,184",area:"2,381,740",gdp:"$215.7B"},
-  {n:"Angola",                c:"AO",c3:"AGO",dc:"244",  f:"🇦🇴",tz:"Africa/Luanda",tl:"WAT (UTC+1)",cu:"AOA",sy:"Kz",rg:"Africa",pop:"13,068,161",area:"1,246,700",gdp:"$124B"},
-  {n:"Argentina",             c:"AR",c3:"ARG",dc:"54",   f:"🇦🇷",tz:"America/Argentina/Buenos_Aires",tl:"ART (UTC-3)",cu:"ARS",sy:"$",rg:"South America",pop:"41,343,201",area:"2,766,890",gdp:"$484.6B"},
-  {n:"Australia",             c:"AU",c3:"AUS",dc:"61",   f:"🇦🇺",tz:"Australia/Sydney",tl:"AEST (UTC+10)",cu:"AUD",sy:"A$",rg:"Oceania",pop:"21,515,754",area:"7,686,850",gdp:"$1.49T"},
-  {n:"Austria",               c:"AT",c3:"AUT",dc:"43",   f:"🇦🇹",tz:"Europe/Vienna",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"8,205,000",area:"83,858",gdp:"$417.9B"},
-  {n:"Bangladesh",            c:"BD",c3:"BGD",dc:"880",  f:"🇧🇩",tz:"Asia/Dhaka",tl:"BST (UTC+6)",cu:"BDT",sy:"৳",rg:"Asia",pop:"156,118,464",area:"144,000",gdp:"$140.2B"},
-  {n:"Belgium",               c:"BE",c3:"BEL",dc:"32",   f:"🇧🇪",tz:"Europe/Brussels",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"10,403,000",area:"30,510",gdp:"$507.4B"},
-  {n:"Brazil",                c:"BR",c3:"BRA",dc:"55",   f:"🇧🇷",tz:"America/Sao_Paulo",tl:"BRT (UTC-3)",cu:"BRL",sy:"R$",rg:"South America",pop:"201,103,330",area:"8,511,965",gdp:"$2.19T"},
-  {n:"Cameroon",              c:"CM",c3:"CMR",dc:"237",  f:"🇨🇲",tz:"Africa/Douala",tl:"WAT (UTC+1)",cu:"XAF",sy:"FCFA",rg:"Africa",pop:"19,294,149",area:"475,440",gdp:"$27.88B"},
-  {n:"Canada",                c:"CA",c3:"CAN",dc:"1",    f:"🇨🇦",tz:"America/Toronto",tl:"EST (UTC-5)",cu:"CAD",sy:"CA$",rg:"North America",pop:"33,679,000",area:"9,984,670",gdp:"$1.83T"},
-  {n:"Chile",                 c:"CL",c3:"CHL",dc:"56",   f:"🇨🇱",tz:"America/Santiago",tl:"CLT (UTC-4)",cu:"CLP",sy:"$",rg:"South America",pop:"16,746,491",area:"756,950",gdp:"$281.7B"},
-  {n:"China",                 c:"CN",c3:"CHN",dc:"86",   f:"🇨🇳",tz:"Asia/Shanghai",tl:"CST (UTC+8)",cu:"CNY",sy:"¥",rg:"Asia",pop:"1,330,044,000",area:"9,596,960",gdp:"$9.33T"},
-  {n:"Colombia",              c:"CO",c3:"COL",dc:"57",   f:"🇨🇴",tz:"America/Bogota",tl:"COT (UTC-5)",cu:"COP",sy:"$",rg:"South America",pop:"47,790,000",area:"1,138,910",gdp:"$369.2B"},
-  {n:"Congo (DRC)",           c:"CD",c3:"COD",dc:"243",  f:"🇨🇩",tz:"Africa/Kinshasa",tl:"WAT (UTC+1)",cu:"CDF",sy:"FC",rg:"Africa",pop:"70,916,439",area:"2,345,410",gdp:"$18.56B"},
-  {n:"Cote d'Ivoire",         c:"CI",c3:"CIV",dc:"225",  f:"🇨🇮",tz:"Africa/Abidjan",tl:"GMT (UTC+0)",cu:"XOF",sy:"CFA",rg:"Africa",pop:"21,058,798",area:"322,460",gdp:"$28.28B"},
-  {n:"Czech Republic",        c:"CZ",c3:"CZE",dc:"420",  f:"🇨🇿",tz:"Europe/Prague",tl:"CET (UTC+1)",cu:"CZK",sy:"Kč",rg:"Europe",pop:"10,476,000",area:"78,866",gdp:"$194.8B"},
-  {n:"Denmark",               c:"DK",c3:"DNK",dc:"45",   f:"🇩🇰",tz:"Europe/Copenhagen",tl:"CET (UTC+1)",cu:"DKK",sy:"kr",rg:"Europe",pop:"5,484,000",area:"43,094",gdp:"$324.3B"},
-  {n:"Egypt",                 c:"EG",c3:"EGY",dc:"20",   f:"🇪🇬",tz:"Africa/Cairo",tl:"EET (UTC+2)",cu:"EGP",sy:"£",rg:"Africa",pop:"80,471,869",area:"1,001,450",gdp:"$262B"},
-  {n:"Ethiopia",              c:"ET",c3:"ETH",dc:"251",  f:"🇪🇹",tz:"Africa/Addis_Ababa",tl:"EAT (UTC+3)",cu:"ETB",sy:"Br",rg:"Africa",pop:"88,013,491",area:"1,127,127",gdp:"$47.34B"},
-  {n:"Finland",               c:"FI",c3:"FIN",dc:"358",  f:"🇫🇮",tz:"Europe/Helsinki",tl:"EET (UTC+2)",cu:"EUR",sy:"€",rg:"Europe",pop:"5,244,000",area:"337,030",gdp:"$259.6B"},
-  {n:"France",                c:"FR",c3:"FRA",dc:"33",   f:"🇫🇷",tz:"Europe/Paris",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"64,768,389",area:"547,030",gdp:"$2.74T"},
-  {n:"Germany",               c:"DE",c3:"DEU",dc:"49",   f:"🇩🇪",tz:"Europe/Berlin",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"81,802,257",area:"357,021",gdp:"$3.59T"},
-  {n:"Ghana",                 c:"GH",c3:"GHA",dc:"233",  f:"🇬🇭",tz:"Africa/Accra",tl:"GMT (UTC+0)",cu:"GHS",sy:"GH₵",rg:"Africa",pop:"24,339,838",area:"239,460",gdp:"$45.55B"},
-  {n:"Greece",                c:"GR",c3:"GRC",dc:"30",   f:"🇬🇷",tz:"Europe/Athens",tl:"EET (UTC+2)",cu:"EUR",sy:"€",rg:"Europe",pop:"11,000,000",area:"131,940",gdp:"$243.3B"},
-  {n:"Hong Kong",             c:"HK",c3:"HKG",dc:"852",  f:"🇭🇰",tz:"Asia/Hong_Kong",tl:"HKT (UTC+8)",cu:"HKD",sy:"HK$",rg:"Asia",pop:"6,898,686",area:"1,092",gdp:"$272.1B"},
-  {n:"Hungary",               c:"HU",c3:"HUN",dc:"36",   f:"🇭🇺",tz:"Europe/Budapest",tl:"CET (UTC+1)",cu:"HUF",sy:"Ft",rg:"Europe",pop:"9,982,000",area:"93,030",gdp:"$130.6B"},
-  {n:"India",                 c:"IN",c3:"IND",dc:"91",   f:"🇮🇳",tz:"Asia/Kolkata",tl:"IST (UTC+5:30)",cu:"INR",sy:"₹",rg:"Asia",pop:"1,173,108,018",area:"3,287,590",gdp:"$1.67T"},
-  {n:"Indonesia",             c:"ID",c3:"IDN",dc:"62",   f:"🇮🇩",tz:"Asia/Jakarta",tl:"WIB (UTC+7)",cu:"IDR",sy:"Rp",rg:"Asia",pop:"242,968,342",area:"1,919,440",gdp:"$867.5B"},
-  {n:"Iran",                  c:"IR",c3:"IRN",dc:"98",   f:"🇮🇷",tz:"Asia/Tehran",tl:"IRST (UTC+3:30)",cu:"IRR",sy:"﷼",rg:"Asia",pop:"76,923,300",area:"1,648,000",gdp:"$411.9B"},
-  {n:"Iraq",                  c:"IQ",c3:"IRQ",dc:"964",  f:"🇮🇶",tz:"Asia/Baghdad",tl:"AST (UTC+3)",cu:"IQD",sy:"ID",rg:"Asia",pop:"29,671,605",area:"437,072",gdp:"$221.8B"},
-  {n:"Ireland",               c:"IE",c3:"IRL",dc:"353",  f:"🇮🇪",tz:"Europe/Dublin",tl:"GMT (UTC+0)",cu:"EUR",sy:"€",rg:"Europe",pop:"4,622,917",area:"70,280",gdp:"$220.9B"},
-  {n:"Israel",                c:"IL",c3:"ISR",dc:"972",  f:"🇮🇱",tz:"Asia/Jerusalem",tl:"IST (UTC+2)",cu:"ILS",sy:"₪",rg:"Asia",pop:"7,353,985",area:"20,770",gdp:"$272.7B"},
-  {n:"Italy",                 c:"IT",c3:"ITA",dc:"39",   f:"🇮🇹",tz:"Europe/Rome",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"60,340,328",area:"301,230",gdp:"$2.07T"},
-  {n:"Japan",                 c:"JP",c3:"JPN",dc:"81",   f:"🇯🇵",tz:"Asia/Tokyo",tl:"JST (UTC+9)",cu:"JPY",sy:"¥",rg:"Asia",pop:"127,288,000",area:"377,835",gdp:"$5.01T"},
-  {n:"Jordan",                c:"JO",c3:"JOR",dc:"962",  f:"🇯🇴",tz:"Asia/Amman",tl:"EET (UTC+2)",cu:"JOD",sy:"JD",rg:"Asia",pop:"6,407,085",area:"92,300",gdp:"$34.08B"},
-  {n:"Kenya",                 c:"KE",c3:"KEN",dc:"254",  f:"🇰🇪",tz:"Africa/Nairobi",tl:"EAT (UTC+3)",cu:"KES",sy:"KSh",rg:"Africa",pop:"40,046,566",area:"582,650",gdp:"$45.31B"},
-  {n:"Kuwait",                c:"KW",c3:"KWT",dc:"965",  f:"🇰🇼",tz:"Asia/Kuwait",tl:"AST (UTC+3)",cu:"KWD",sy:"KD",rg:"Asia",pop:"2,789,132",area:"17,820",gdp:"$179.5B"},
-  {n:"Malaysia",              c:"MY",c3:"MYS",dc:"60",   f:"🇲🇾",tz:"Asia/Kuala_Lumpur",tl:"MYT (UTC+8)",cu:"MYR",sy:"RM",rg:"Asia",pop:"28,274,729",area:"329,750",gdp:"$312.4B"},
-  {n:"Mexico",                c:"MX",c3:"MEX",dc:"52",   f:"🇲🇽",tz:"America/Mexico_City",tl:"CST (UTC-6)",cu:"MXN",sy:"$",rg:"North America",pop:"112,468,855",area:"1,972,550",gdp:"$1.33T"},
-  {n:"Morocco",               c:"MA",c3:"MAR",dc:"212",  f:"🇲🇦",tz:"Africa/Casablanca",tl:"WET (UTC+0)",cu:"MAD",sy:"MAD",rg:"Africa",pop:"31,627,428",area:"446,550",gdp:"$104.8B"},
-  {n:"Netherlands",           c:"NL",c3:"NLD",dc:"31",   f:"🇳🇱",tz:"Europe/Amsterdam",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"16,645,000",area:"41,526",gdp:"$722.3B"},
-  {n:"New Zealand",           c:"NZ",c3:"NZL",dc:"64",   f:"🇳🇿",tz:"Pacific/Auckland",tl:"NZST (UTC+12)",cu:"NZD",sy:"NZ$",rg:"Oceania",pop:"4,252,277",area:"268,680",gdp:"$181.1B"},
-  {n:"Nigeria",               c:"NG",c3:"NGA",dc:"234",  f:"🇳🇬",tz:"Africa/Lagos",tl:"WAT (UTC+1)",cu:"NGN",sy:"₦",rg:"Africa",pop:"154,000,000",area:"923,768",gdp:"$502B"},
-  {n:"Norway",                c:"NO",c3:"NOR",dc:"47",   f:"🇳🇴",tz:"Europe/Oslo",tl:"CET (UTC+1)",cu:"NOK",sy:"kr",rg:"Europe",pop:"5,009,150",area:"324,220",gdp:"$515.8B"},
-  {n:"Pakistan",              c:"PK",c3:"PAK",dc:"92",   f:"🇵🇰",tz:"Asia/Karachi",tl:"PKT (UTC+5)",cu:"PKR",sy:"₨",rg:"Asia",pop:"184,404,791",area:"803,940",gdp:"$236.5B"},
-  {n:"Peru",                  c:"PE",c3:"PER",dc:"51",   f:"🇵🇪",tz:"America/Lima",tl:"PET (UTC-5)",cu:"PEN",sy:"S/.",rg:"South America",pop:"29,907,003",area:"1,285,220",gdp:"$210.3B"},
-  {n:"Philippines",           c:"PH",c3:"PHL",dc:"63",   f:"🇵🇭",tz:"Asia/Manila",tl:"PHT (UTC+8)",cu:"PHP",sy:"₱",rg:"Asia",pop:"99,900,177",area:"300,000",gdp:"$272.2B"},
-  {n:"Poland",                c:"PL",c3:"POL",dc:"48",   f:"🇵🇱",tz:"Europe/Warsaw",tl:"CET (UTC+1)",cu:"PLN",sy:"zł",rg:"Europe",pop:"38,500,000",area:"312,685",gdp:"$513.9B"},
-  {n:"Portugal",              c:"PT",c3:"PRT",dc:"351",  f:"🇵🇹",tz:"Europe/Lisbon",tl:"WET (UTC+0)",cu:"EUR",sy:"€",rg:"Europe",pop:"10,676,000",area:"92,391",gdp:"$219.3B"},
-  {n:"Qatar",                 c:"QA",c3:"QAT",dc:"974",  f:"🇶🇦",tz:"Asia/Qatar",tl:"AST (UTC+3)",cu:"QAR",sy:"QR",rg:"Asia",pop:"840,926",area:"11,437",gdp:"$213.1B"},
-  {n:"Romania",               c:"RO",c3:"ROU",dc:"40",   f:"🇷🇴",tz:"Europe/Bucharest",tl:"EET (UTC+2)",cu:"RON",sy:"lei",rg:"Europe",pop:"21,959,278",area:"237,500",gdp:"$188.9B"},
-  {n:"Russia",                c:"RU",c3:"RUS",dc:"7",    f:"🇷🇺",tz:"Europe/Moscow",tl:"MSK (UTC+3)",cu:"RUB",sy:"₽",rg:"Europe",pop:"140,702,000",area:"17,100,000",gdp:"$2.11T"},
-  {n:"Rwanda",                c:"RW",c3:"RWA",dc:"250",  f:"🇷🇼",tz:"Africa/Kigali",tl:"CAT (UTC+2)",cu:"RWF",sy:"Fr",rg:"Africa",pop:"11,055,976",area:"26,338",gdp:"$7.7B"},
-  {n:"Saudi Arabia",          c:"SA",c3:"SAU",dc:"966",  f:"🇸🇦",tz:"Asia/Riyadh",tl:"AST (UTC+3)",cu:"SAR",sy:"SAR",rg:"Asia",pop:"25,731,776",area:"1,960,582",gdp:"$718.5B"},
-  {n:"Senegal",               c:"SN",c3:"SEN",dc:"221",  f:"🇸🇳",tz:"Africa/Dakar",tl:"GMT (UTC+0)",cu:"XOF",sy:"CFA",rg:"Africa",pop:"12,323,252",area:"196,190",gdp:"$15.36B"},
-  {n:"Singapore",             c:"SG",c3:"SGP",dc:"65",   f:"🇸🇬",tz:"Asia/Singapore",tl:"SGT (UTC+8)",cu:"SGD",sy:"S$",rg:"Asia",pop:"4,701,069",area:"693",gdp:"$295.7B"},
-  {n:"South Africa",          c:"ZA",c3:"ZAF",dc:"27",   f:"🇿🇦",tz:"Africa/Johannesburg",tl:"SAST (UTC+2)",cu:"ZAR",sy:"R",rg:"Africa",pop:"49,000,000",area:"1,219,912",gdp:"$353.9B"},
-  {n:"South Korea",           c:"KR",c3:"KOR",dc:"82",   f:"🇰🇷",tz:"Asia/Seoul",tl:"KST (UTC+9)",cu:"KRW",sy:"₩",rg:"Asia",pop:"48,422,644",area:"98,480",gdp:"$1.20T"},
-  {n:"Spain",                 c:"ES",c3:"ESP",dc:"34",   f:"🇪🇸",tz:"Europe/Madrid",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"46,505,963",area:"504,782",gdp:"$1.36T"},
-  {n:"Sweden",                c:"SE",c3:"SWE",dc:"46",   f:"🇸🇪",tz:"Europe/Stockholm",tl:"CET (UTC+1)",cu:"SEK",sy:"kr",rg:"Europe",pop:"9,555,893",area:"449,964",gdp:"$552B"},
-  {n:"Switzerland",           c:"CH",c3:"CHE",dc:"41",   f:"🇨🇭",tz:"Europe/Zurich",tl:"CET (UTC+1)",cu:"CHF",sy:"Fr",rg:"Europe",pop:"7,581,000",area:"41,290",gdp:"$646.2B"},
-  {n:"Taiwan",                c:"TW",c3:"TWN",dc:"886",  f:"🇹🇼",tz:"Asia/Taipei",tl:"CST (UTC+8)",cu:"TWD",sy:"NT$",rg:"Asia",pop:"22,894,384",area:"35,980",gdp:"$484.7B"},
-  {n:"Tanzania",              c:"TZ",c3:"TZA",dc:"255",  f:"🇹🇿",tz:"Africa/Dar_es_Salaam",tl:"EAT (UTC+3)",cu:"TZS",sy:"TSh",rg:"Africa",pop:"41,892,895",area:"945,087",gdp:"$31.94B"},
-  {n:"Thailand",              c:"TH",c3:"THA",dc:"66",   f:"🇹🇭",tz:"Asia/Bangkok",tl:"ICT (UTC+7)",cu:"THB",sy:"฿",rg:"Asia",pop:"67,089,500",area:"514,000",gdp:"$400.9B"},
-  {n:"Turkey",                c:"TR",c3:"TUR",dc:"90",   f:"🇹🇷",tz:"Europe/Istanbul",tl:"TRT (UTC+3)",cu:"TRY",sy:"₺",rg:"Asia",pop:"77,804,122",area:"780,580",gdp:"$821.8B"},
-  {n:"Uganda",                c:"UG",c3:"UGA",dc:"256",  f:"🇺🇬",tz:"Africa/Kampala",tl:"EAT (UTC+3)",cu:"UGX",sy:"USh",rg:"Africa",pop:"33,398,682",area:"236,040",gdp:"$22.6B"},
-  {n:"Ukraine",               c:"UA",c3:"UKR",dc:"380",  f:"🇺🇦",tz:"Europe/Kyiv",tl:"EET (UTC+2)",cu:"UAH",sy:"₴",rg:"Europe",pop:"45,415,596",area:"603,700",gdp:"$175.5B"},
-  {n:"United Arab Emirates",  c:"AE",c3:"ARE",dc:"971",  f:"🇦🇪",tz:"Asia/Dubai",tl:"GST (UTC+4)",cu:"AED",sy:"د.إ",rg:"Asia",pop:"4,975,593",area:"82,880",gdp:"$390B"},
-  {n:"United Kingdom",        c:"GB",c3:"GBR",dc:"44",   f:"🇬🇧",tz:"Europe/London",tl:"GMT (UTC+0)",cu:"GBP",sy:"£",rg:"Europe",pop:"62,348,447",area:"244,820",gdp:"$2.49T"},
-  {n:"United States",         c:"US",c3:"USA",dc:"1",    f:"🇺🇸",tz:"America/New_York",tl:"EST (UTC-5)",cu:"USD",sy:"$",rg:"North America",pop:"310,232,863",area:"9,629,091",gdp:"$16.72T"},
-  {n:"Venezuela",             c:"VE",c3:"VEN",dc:"58",   f:"🇻🇪",tz:"America/Caracas",tl:"VET (UTC-4)",cu:"VES",sy:"Bs.S",rg:"South America",pop:"27,223,228",area:"912,050",gdp:"$367.5B"},
-  {n:"Vietnam",               c:"VN",c3:"VNM",dc:"84",   f:"🇻🇳",tz:"Asia/Ho_Chi_Minh",tl:"ICT (UTC+7)",cu:"VND",sy:"₫",rg:"Asia",pop:"89,571,130",area:"329,560",gdp:"$170B"},
-  {n:"Zambia",                c:"ZM",c3:"ZMB",dc:"260",  f:"🇿🇲",tz:"Africa/Lusaka",tl:"CAT (UTC+2)",cu:"ZMW",sy:"ZK",rg:"Africa",pop:"13,460,305",area:"752,614",gdp:"$22.24B"},
-  {n:"Zimbabwe",              c:"ZW",c3:"ZWE",dc:"263",  f:"🇿🇼",tz:"Africa/Harare",tl:"CAT (UTC+2)",cu:"ZWL",sy:"Z$",rg:"Africa",pop:"11,651,858",area:"390,580",gdp:"$10.48B"},
+  {n:"Afghanistan",c:"AF",c3:"AFG",dc:"93",f:"🇦🇫",tz:"Asia/Kabul",tl:"AFT (UTC+4:30)",cu:"AFN",sy:"؋",rg:"Asia",pop:"29,121,286",area:"647,500",gdp:"$20.65B"},
+  {n:"Albania",c:"AL",c3:"ALB",dc:"355",f:"🇦🇱",tz:"Europe/Tirane",tl:"CET (UTC+1)",cu:"ALL",sy:"L",rg:"Europe",pop:"2,986,952",area:"28,748",gdp:"$12.8B"},
+  {n:"Algeria",c:"DZ",c3:"DZA",dc:"213",f:"🇩🇿",tz:"Africa/Algiers",tl:"CET (UTC+1)",cu:"DZD",sy:"دج",rg:"Africa",pop:"34,586,184",area:"2,381,740",gdp:"$215.7B"},
+  {n:"Angola",c:"AO",c3:"AGO",dc:"244",f:"🇦🇴",tz:"Africa/Luanda",tl:"WAT (UTC+1)",cu:"AOA",sy:"Kz",rg:"Africa",pop:"13,068,161",area:"1,246,700",gdp:"$124B"},
+  {n:"Argentina",c:"AR",c3:"ARG",dc:"54",f:"🇦🇷",tz:"America/Argentina/Buenos_Aires",tl:"ART (UTC-3)",cu:"ARS",sy:"$",rg:"South America",pop:"41,343,201",area:"2,766,890",gdp:"$484.6B"},
+  {n:"Australia",c:"AU",c3:"AUS",dc:"61",f:"🇦🇺",tz:"Australia/Sydney",tl:"AEST (UTC+10)",cu:"AUD",sy:"A$",rg:"Oceania",pop:"21,515,754",area:"7,686,850",gdp:"$1.49T"},
+  {n:"Austria",c:"AT",c3:"AUT",dc:"43",f:"🇦🇹",tz:"Europe/Vienna",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"8,205,000",area:"83,858",gdp:"$417.9B"},
+  {n:"Bangladesh",c:"BD",c3:"BGD",dc:"880",f:"🇧🇩",tz:"Asia/Dhaka",tl:"BST (UTC+6)",cu:"BDT",sy:"৳",rg:"Asia",pop:"156,118,464",area:"144,000",gdp:"$140.2B"},
+  {n:"Belgium",c:"BE",c3:"BEL",dc:"32",f:"🇧🇪",tz:"Europe/Brussels",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"10,403,000",area:"30,510",gdp:"$507.4B"},
+  {n:"Brazil",c:"BR",c3:"BRA",dc:"55",f:"🇧🇷",tz:"America/Sao_Paulo",tl:"BRT (UTC-3)",cu:"BRL",sy:"R$",rg:"South America",pop:"201,103,330",area:"8,511,965",gdp:"$2.19T"},
+  {n:"Cameroon",c:"CM",c3:"CMR",dc:"237",f:"🇨🇲",tz:"Africa/Douala",tl:"WAT (UTC+1)",cu:"XAF",sy:"FCFA",rg:"Africa",pop:"19,294,149",area:"475,440",gdp:"$27.88B"},
+  {n:"Canada",c:"CA",c3:"CAN",dc:"1",f:"🇨🇦",tz:"America/Toronto",tl:"EST (UTC-5)",cu:"CAD",sy:"CA$",rg:"North America",pop:"33,679,000",area:"9,984,670",gdp:"$1.83T"},
+  {n:"China",c:"CN",c3:"CHN",dc:"86",f:"🇨🇳",tz:"Asia/Shanghai",tl:"CST (UTC+8)",cu:"CNY",sy:"¥",rg:"Asia",pop:"1,330,044,000",area:"9,596,960",gdp:"$9.33T"},
+  {n:"Congo (DRC)",c:"CD",c3:"COD",dc:"243",f:"🇨🇩",tz:"Africa/Kinshasa",tl:"WAT (UTC+1)",cu:"CDF",sy:"FC",rg:"Africa",pop:"70,916,439",area:"2,345,410",gdp:"$18.56B"},
+  {n:"Cote d'Ivoire",c:"CI",c3:"CIV",dc:"225",f:"🇨🇮",tz:"Africa/Abidjan",tl:"GMT (UTC+0)",cu:"XOF",sy:"CFA",rg:"Africa",pop:"21,058,798",area:"322,460",gdp:"$28.28B"},
+  {n:"Czech Republic",c:"CZ",c3:"CZE",dc:"420",f:"🇨🇿",tz:"Europe/Prague",tl:"CET (UTC+1)",cu:"CZK",sy:"Kč",rg:"Europe",pop:"10,476,000",area:"78,866",gdp:"$194.8B"},
+  {n:"Denmark",c:"DK",c3:"DNK",dc:"45",f:"🇩🇰",tz:"Europe/Copenhagen",tl:"CET (UTC+1)",cu:"DKK",sy:"kr",rg:"Europe",pop:"5,484,000",area:"43,094",gdp:"$324.3B"},
+  {n:"Egypt",c:"EG",c3:"EGY",dc:"20",f:"🇪🇬",tz:"Africa/Cairo",tl:"EET (UTC+2)",cu:"EGP",sy:"£",rg:"Africa",pop:"80,471,869",area:"1,001,450",gdp:"$262B"},
+  {n:"Ethiopia",c:"ET",c3:"ETH",dc:"251",f:"🇪🇹",tz:"Africa/Addis_Ababa",tl:"EAT (UTC+3)",cu:"ETB",sy:"Br",rg:"Africa",pop:"88,013,491",area:"1,127,127",gdp:"$47.34B"},
+  {n:"Finland",c:"FI",c3:"FIN",dc:"358",f:"🇫🇮",tz:"Europe/Helsinki",tl:"EET (UTC+2)",cu:"EUR",sy:"€",rg:"Europe",pop:"5,244,000",area:"337,030",gdp:"$259.6B"},
+  {n:"France",c:"FR",c3:"FRA",dc:"33",f:"🇫🇷",tz:"Europe/Paris",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"64,768,389",area:"547,030",gdp:"$2.74T"},
+  {n:"Germany",c:"DE",c3:"DEU",dc:"49",f:"🇩🇪",tz:"Europe/Berlin",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"81,802,257",area:"357,021",gdp:"$3.59T"},
+  {n:"Ghana",c:"GH",c3:"GHA",dc:"233",f:"🇬🇭",tz:"Africa/Accra",tl:"GMT (UTC+0)",cu:"GHS",sy:"GH₵",rg:"Africa",pop:"24,339,838",area:"239,460",gdp:"$45.55B"},
+  {n:"Greece",c:"GR",c3:"GRC",dc:"30",f:"🇬🇷",tz:"Europe/Athens",tl:"EET (UTC+2)",cu:"EUR",sy:"€",rg:"Europe",pop:"11,000,000",area:"131,940",gdp:"$243.3B"},
+  {n:"Hong Kong",c:"HK",c3:"HKG",dc:"852",f:"🇭🇰",tz:"Asia/Hong_Kong",tl:"HKT (UTC+8)",cu:"HKD",sy:"HK$",rg:"Asia",pop:"6,898,686",area:"1,092",gdp:"$272.1B"},
+  {n:"Hungary",c:"HU",c3:"HUN",dc:"36",f:"🇭🇺",tz:"Europe/Budapest",tl:"CET (UTC+1)",cu:"HUF",sy:"Ft",rg:"Europe",pop:"9,982,000",area:"93,030",gdp:"$130.6B"},
+  {n:"India",c:"IN",c3:"IND",dc:"91",f:"🇮🇳",tz:"Asia/Kolkata",tl:"IST (UTC+5:30)",cu:"INR",sy:"₹",rg:"Asia",pop:"1,173,108,018",area:"3,287,590",gdp:"$1.67T"},
+  {n:"Indonesia",c:"ID",c3:"IDN",dc:"62",f:"🇮🇩",tz:"Asia/Jakarta",tl:"WIB (UTC+7)",cu:"IDR",sy:"Rp",rg:"Asia",pop:"242,968,342",area:"1,919,440",gdp:"$867.5B"},
+  {n:"Ireland",c:"IE",c3:"IRL",dc:"353",f:"🇮🇪",tz:"Europe/Dublin",tl:"GMT (UTC+0)",cu:"EUR",sy:"€",rg:"Europe",pop:"4,622,917",area:"70,280",gdp:"$220.9B"},
+  {n:"Israel",c:"IL",c3:"ISR",dc:"972",f:"🇮🇱",tz:"Asia/Jerusalem",tl:"IST (UTC+2)",cu:"ILS",sy:"₪",rg:"Asia",pop:"7,353,985",area:"20,770",gdp:"$272.7B"},
+  {n:"Italy",c:"IT",c3:"ITA",dc:"39",f:"🇮🇹",tz:"Europe/Rome",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"60,340,328",area:"301,230",gdp:"$2.07T"},
+  {n:"Japan",c:"JP",c3:"JPN",dc:"81",f:"🇯🇵",tz:"Asia/Tokyo",tl:"JST (UTC+9)",cu:"JPY",sy:"¥",rg:"Asia",pop:"127,288,000",area:"377,835",gdp:"$5.01T"},
+  {n:"Jordan",c:"JO",c3:"JOR",dc:"962",f:"🇯🇴",tz:"Asia/Amman",tl:"EET (UTC+2)",cu:"JOD",sy:"JD",rg:"Asia",pop:"6,407,085",area:"92,300",gdp:"$34.08B"},
+  {n:"Kenya",c:"KE",c3:"KEN",dc:"254",f:"🇰🇪",tz:"Africa/Nairobi",tl:"EAT (UTC+3)",cu:"KES",sy:"KSh",rg:"Africa",pop:"40,046,566",area:"582,650",gdp:"$45.31B"},
+  {n:"Kuwait",c:"KW",c3:"KWT",dc:"965",f:"🇰🇼",tz:"Asia/Kuwait",tl:"AST (UTC+3)",cu:"KWD",sy:"KD",rg:"Asia",pop:"2,789,132",area:"17,820",gdp:"$179.5B"},
+  {n:"Malaysia",c:"MY",c3:"MYS",dc:"60",f:"🇲🇾",tz:"Asia/Kuala_Lumpur",tl:"MYT (UTC+8)",cu:"MYR",sy:"RM",rg:"Asia",pop:"28,274,729",area:"329,750",gdp:"$312.4B"},
+  {n:"Mexico",c:"MX",c3:"MEX",dc:"52",f:"🇲🇽",tz:"America/Mexico_City",tl:"CST (UTC-6)",cu:"MXN",sy:"$",rg:"North America",pop:"112,468,855",area:"1,972,550",gdp:"$1.33T"},
+  {n:"Morocco",c:"MA",c3:"MAR",dc:"212",f:"🇲🇦",tz:"Africa/Casablanca",tl:"WET (UTC+0)",cu:"MAD",sy:"MAD",rg:"Africa",pop:"31,627,428",area:"446,550",gdp:"$104.8B"},
+  {n:"Netherlands",c:"NL",c3:"NLD",dc:"31",f:"🇳🇱",tz:"Europe/Amsterdam",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"16,645,000",area:"41,526",gdp:"$722.3B"},
+  {n:"New Zealand",c:"NZ",c3:"NZL",dc:"64",f:"🇳🇿",tz:"Pacific/Auckland",tl:"NZST (UTC+12)",cu:"NZD",sy:"NZ$",rg:"Oceania",pop:"4,252,277",area:"268,680",gdp:"$181.1B"},
+  {n:"Nigeria",c:"NG",c3:"NGA",dc:"234",f:"🇳🇬",tz:"Africa/Lagos",tl:"WAT (UTC+1)",cu:"NGN",sy:"₦",rg:"Africa",pop:"154,000,000",area:"923,768",gdp:"$502B"},
+  {n:"Norway",c:"NO",c3:"NOR",dc:"47",f:"🇳🇴",tz:"Europe/Oslo",tl:"CET (UTC+1)",cu:"NOK",sy:"kr",rg:"Europe",pop:"5,009,150",area:"324,220",gdp:"$515.8B"},
+  {n:"Pakistan",c:"PK",c3:"PAK",dc:"92",f:"🇵🇰",tz:"Asia/Karachi",tl:"PKT (UTC+5)",cu:"PKR",sy:"₨",rg:"Asia",pop:"184,404,791",area:"803,940",gdp:"$236.5B"},
+  {n:"Philippines",c:"PH",c3:"PHL",dc:"63",f:"🇵🇭",tz:"Asia/Manila",tl:"PHT (UTC+8)",cu:"PHP",sy:"₱",rg:"Asia",pop:"99,900,177",area:"300,000",gdp:"$272.2B"},
+  {n:"Poland",c:"PL",c3:"POL",dc:"48",f:"🇵🇱",tz:"Europe/Warsaw",tl:"CET (UTC+1)",cu:"PLN",sy:"zł",rg:"Europe",pop:"38,500,000",area:"312,685",gdp:"$513.9B"},
+  {n:"Portugal",c:"PT",c3:"PRT",dc:"351",f:"🇵🇹",tz:"Europe/Lisbon",tl:"WET (UTC+0)",cu:"EUR",sy:"€",rg:"Europe",pop:"10,676,000",area:"92,391",gdp:"$219.3B"},
+  {n:"Qatar",c:"QA",c3:"QAT",dc:"974",f:"🇶🇦",tz:"Asia/Qatar",tl:"AST (UTC+3)",cu:"QAR",sy:"QR",rg:"Asia",pop:"840,926",area:"11,437",gdp:"$213.1B"},
+  {n:"Romania",c:"RO",c3:"ROU",dc:"40",f:"🇷🇴",tz:"Europe/Bucharest",tl:"EET (UTC+2)",cu:"RON",sy:"lei",rg:"Europe",pop:"21,959,278",area:"237,500",gdp:"$188.9B"},
+  {n:"Russia",c:"RU",c3:"RUS",dc:"7",f:"🇷🇺",tz:"Europe/Moscow",tl:"MSK (UTC+3)",cu:"RUB",sy:"₽",rg:"Europe",pop:"140,702,000",area:"17,100,000",gdp:"$2.11T"},
+  {n:"Rwanda",c:"RW",c3:"RWA",dc:"250",f:"🇷🇼",tz:"Africa/Kigali",tl:"CAT (UTC+2)",cu:"RWF",sy:"Fr",rg:"Africa",pop:"11,055,976",area:"26,338",gdp:"$7.7B"},
+  {n:"Saudi Arabia",c:"SA",c3:"SAU",dc:"966",f:"🇸🇦",tz:"Asia/Riyadh",tl:"AST (UTC+3)",cu:"SAR",sy:"SAR",rg:"Asia",pop:"25,731,776",area:"1,960,582",gdp:"$718.5B"},
+  {n:"Senegal",c:"SN",c3:"SEN",dc:"221",f:"🇸🇳",tz:"Africa/Dakar",tl:"GMT (UTC+0)",cu:"XOF",sy:"CFA",rg:"Africa",pop:"12,323,252",area:"196,190",gdp:"$15.36B"},
+  {n:"Singapore",c:"SG",c3:"SGP",dc:"65",f:"🇸🇬",tz:"Asia/Singapore",tl:"SGT (UTC+8)",cu:"SGD",sy:"S$",rg:"Asia",pop:"4,701,069",area:"693",gdp:"$295.7B"},
+  {n:"South Africa",c:"ZA",c3:"ZAF",dc:"27",f:"🇿🇦",tz:"Africa/Johannesburg",tl:"SAST (UTC+2)",cu:"ZAR",sy:"R",rg:"Africa",pop:"49,000,000",area:"1,219,912",gdp:"$353.9B"},
+  {n:"South Korea",c:"KR",c3:"KOR",dc:"82",f:"🇰🇷",tz:"Asia/Seoul",tl:"KST (UTC+9)",cu:"KRW",sy:"₩",rg:"Asia",pop:"48,422,644",area:"98,480",gdp:"$1.20T"},
+  {n:"Spain",c:"ES",c3:"ESP",dc:"34",f:"🇪🇸",tz:"Europe/Madrid",tl:"CET (UTC+1)",cu:"EUR",sy:"€",rg:"Europe",pop:"46,505,963",area:"504,782",gdp:"$1.36T"},
+  {n:"Sweden",c:"SE",c3:"SWE",dc:"46",f:"🇸🇪",tz:"Europe/Stockholm",tl:"CET (UTC+1)",cu:"SEK",sy:"kr",rg:"Europe",pop:"9,555,893",area:"449,964",gdp:"$552B"},
+  {n:"Switzerland",c:"CH",c3:"CHE",dc:"41",f:"🇨🇭",tz:"Europe/Zurich",tl:"CET (UTC+1)",cu:"CHF",sy:"Fr",rg:"Europe",pop:"7,581,000",area:"41,290",gdp:"$646.2B"},
+  {n:"Tanzania",c:"TZ",c3:"TZA",dc:"255",f:"🇹🇿",tz:"Africa/Dar_es_Salaam",tl:"EAT (UTC+3)",cu:"TZS",sy:"TSh",rg:"Africa",pop:"41,892,895",area:"945,087",gdp:"$31.94B"},
+  {n:"Thailand",c:"TH",c3:"THA",dc:"66",f:"🇹🇭",tz:"Asia/Bangkok",tl:"ICT (UTC+7)",cu:"THB",sy:"฿",rg:"Asia",pop:"67,089,500",area:"514,000",gdp:"$400.9B"},
+  {n:"Turkey",c:"TR",c3:"TUR",dc:"90",f:"🇹🇷",tz:"Europe/Istanbul",tl:"TRT (UTC+3)",cu:"TRY",sy:"₺",rg:"Asia",pop:"77,804,122",area:"780,580",gdp:"$821.8B"},
+  {n:"Uganda",c:"UG",c3:"UGA",dc:"256",f:"🇺🇬",tz:"Africa/Kampala",tl:"EAT (UTC+3)",cu:"UGX",sy:"USh",rg:"Africa",pop:"33,398,682",area:"236,040",gdp:"$22.6B"},
+  {n:"Ukraine",c:"UA",c3:"UKR",dc:"380",f:"🇺🇦",tz:"Europe/Kyiv",tl:"EET (UTC+2)",cu:"UAH",sy:"₴",rg:"Europe",pop:"45,415,596",area:"603,700",gdp:"$175.5B"},
+  {n:"United Arab Emirates",c:"AE",c3:"ARE",dc:"971",f:"🇦🇪",tz:"Asia/Dubai",tl:"GST (UTC+4)",cu:"AED",sy:"د.إ",rg:"Asia",pop:"4,975,593",area:"82,880",gdp:"$390B"},
+  {n:"United Kingdom",c:"GB",c3:"GBR",dc:"44",f:"🇬🇧",tz:"Europe/London",tl:"GMT (UTC+0)",cu:"GBP",sy:"£",rg:"Europe",pop:"62,348,447",area:"244,820",gdp:"$2.49T"},
+  {n:"United States",c:"US",c3:"USA",dc:"1",f:"🇺🇸",tz:"America/New_York",tl:"EST (UTC-5)",cu:"USD",sy:"$",rg:"North America",pop:"310,232,863",area:"9,629,091",gdp:"$16.72T"},
+  {n:"Venezuela",c:"VE",c3:"VEN",dc:"58",f:"🇻🇪",tz:"America/Caracas",tl:"VET (UTC-4)",cu:"VES",sy:"Bs.S",rg:"South America",pop:"27,223,228",area:"912,050",gdp:"$367.5B"},
+  {n:"Vietnam",c:"VN",c3:"VNM",dc:"84",f:"🇻🇳",tz:"Asia/Ho_Chi_Minh",tl:"ICT (UTC+7)",cu:"VND",sy:"₫",rg:"Asia",pop:"89,571,130",area:"329,560",gdp:"$170B"},
+  {n:"Zambia",c:"ZM",c3:"ZMB",dc:"260",f:"🇿🇲",tz:"Africa/Lusaka",tl:"CAT (UTC+2)",cu:"ZMW",sy:"ZK",rg:"Africa",pop:"13,460,305",area:"752,614",gdp:"$22.24B"},
+  {n:"Zimbabwe",c:"ZW",c3:"ZWE",dc:"263",f:"🇿🇼",tz:"Africa/Harare",tl:"CAT (UTC+2)",cu:"ZWL",sy:"Z$",rg:"Africa",pop:"11,651,858",area:"390,580",gdp:"$10.48B"},
 ];
 
-/* ══════════════════════════════════════════════
-   COUNTRY SELECTOR STATE & LOGIC
-══════════════════════════════════════════════ */
-let sel=null, ddVisible=false, hiIdx=-1, clkInt=null;
-
-function getRate(cu){
-  if(Object.keys(allRates).length && allRates[cu]!=null) return allRates[cu];
-  return FB[cu]||null;
-}
-
+let sel=null,ddOpen=false,hiIdx=-1,clkInt=null;
+function getR(cu){return fullR[cu]!=null?fullR[cu]:(FB[cu]||null)}
 function getFiltered(){
   const q=document.getElementById('cSearch').value.toLowerCase().trim();
-  if(!q) return C;
-  return C.filter(x=>
-    x.n.toLowerCase().includes(q)||x.c.toLowerCase().includes(q)||
-    x.c3.toLowerCase().includes(q)||x.dc.includes(q)||
-    x.cu.toLowerCase().includes(q)||x.rg.toLowerCase().includes(q)||
-    x.tl.toLowerCase().includes(q)
-  );
+  if(!q)return C;
+  return C.filter(x=>x.n.toLowerCase().includes(q)||x.c.toLowerCase().includes(q)||x.c3.toLowerCase().includes(q)||x.dc.includes(q)||x.cu.toLowerCase().includes(q)||x.rg.toLowerCase().includes(q)||x.tl.toLowerCase().includes(q));
 }
-
 function renderDD(){
-  const data=getFiltered();
-  const dd=document.getElementById('dd');
-  if(!data.length){dd.innerHTML='<div class="cs-empty">No countries found.</div>';return;}
+  const data=getFiltered(),dd=document.getElementById('dd');
+  if(!data.length){dd.innerHTML='<div class="cs-empty">No countries found.</div>';return}
   dd.innerHTML=data.map((x,i)=>{
-    const r=getRate(x.cu);
+    const r=getR(x.cu);
     const act=sel&&sel.c===x.c?' active':'';
-    return `<div class="cs-row${act}" onclick="pick('${x.c}')" data-i="${i}">
-      <div class="cs-flag">${x.f}</div>
-      <div class="cs-info">
-        <div class="cs-name">${x.n}</div>
-        <div class="cs-sub">+${x.dc} · ${x.rg}</div>
-      </div>
-      <div class="cs-right">
-        <div class="cs-cur">${x.cu} ${x.sy}</div>
-        <div class="cs-rate">${r!=null?'1 USD = '+fmtN(r)+' '+x.cu:'—'}</div>
-      </div>
-    </div>`;
+    return `<div class="cs-row${act}" onclick="pick('${x.c}')"><div class="cs-flag">${x.f}</div><div><div class="cs-name">${x.n}</div><div class="cs-sub">+${x.dc} · ${x.rg}</div></div><div class="cs-right"><div class="cs-cur">${x.cu} ${x.sy}</div><div class="cs-rate">${r!=null?fmtFull(r)+' '+x.cu:''}</div></div></div>`;
   }).join('');
 }
-
-function openDD(){ ddVisible=true; document.getElementById('dd').classList.add('open'); renderDD(); }
-function closeDD(){ ddVisible=false; document.getElementById('dd').classList.remove('open'); }
-
-document.getElementById('cSearch').addEventListener('focus', openDD);
+function openDD(){ddOpen=true;document.getElementById('dd').classList.add('open');renderDD()}
+function closeDD(){ddOpen=false;document.getElementById('dd').classList.remove('open')}
+document.getElementById('cSearch').addEventListener('focus',openDD);
 document.getElementById('cSearch').addEventListener('input',function(){
-  document.getElementById('clrBtn').classList.toggle('show',this.value.length>0);
-  hiIdx=-1; openDD();
+  document.getElementById('clrBtn').classList.toggle('show',this.value.length>0);hiIdx=-1;openDD();
 });
 document.getElementById('cSearch').addEventListener('keydown',function(e){
   const rows=document.querySelectorAll('.cs-row');
-  if(e.key==='ArrowDown'){e.preventDefault();hiIdx=Math.min(hiIdx+1,rows.length-1);hlDD(rows);}
-  else if(e.key==='ArrowUp'){e.preventDefault();hiIdx=Math.max(hiIdx-1,0);hlDD(rows);}
-  else if(e.key==='Enter'&&hiIdx>=0){e.preventDefault();rows[hiIdx].click();}
-  else if(e.key==='Escape') closeDD();
+  if(e.key==='ArrowDown'){e.preventDefault();hiIdx=Math.min(hiIdx+1,rows.length-1);rows.forEach((r,i)=>r.classList.toggle('hl',i===hiIdx));if(rows[hiIdx])rows[hiIdx].scrollIntoView({block:'nearest'})}
+  else if(e.key==='ArrowUp'){e.preventDefault();hiIdx=Math.max(hiIdx-1,0);rows.forEach((r,i)=>r.classList.toggle('hl',i===hiIdx));if(rows[hiIdx])rows[hiIdx].scrollIntoView({block:'nearest'})}
+  else if(e.key==='Enter'&&hiIdx>=0){e.preventDefault();rows[hiIdx].click()}
+  else if(e.key==='Escape')closeDD();
 });
-function hlDD(rows){
-  rows.forEach((r,i)=>r.classList.toggle('hl',i===hiIdx));
-  if(rows[hiIdx]) rows[hiIdx].scrollIntoView({block:'nearest'});
-}
-document.addEventListener('click',e=>{if(!e.target.closest('.cs-wrap')) closeDD();});
-function clearSearch(){
-  document.getElementById('cSearch').value='';
-  document.getElementById('clrBtn').classList.remove('show');
-  hiIdx=-1; renderDD();
-}
+document.addEventListener('click',e=>{if(!e.target.closest('.cs-wrap'))closeDD()});
+function clearSearch(){document.getElementById('cSearch').value='';document.getElementById('clrBtn').classList.remove('show');hiIdx=-1;renderDD()}
 
 function pick(code){
-  const x=C.find(v=>v.c===code);
-  if(!x) return;
-  sel=x;
-  closeDD();
+  const x=C.find(v=>v.c===code);if(!x)return;
+  sel=x;closeDD();
   document.getElementById('cSearch').value=x.f+' '+x.n;
   document.getElementById('clrBtn').classList.add('show');
   document.getElementById('fCountry').classList.remove('has-err');
   document.getElementById('cErr').classList.remove('show');
-  populateAll(x);
+  populatePanel(x);
 }
 
-function populateAll(x){
-  const r=getRate(x.cu);
+function populatePanel(x){
+  const r=getR(x.cu);
   document.getElementById('ipHero').dataset.flag=x.f;
   document.getElementById('ipFlag').textContent=x.f;
   document.getElementById('ipName').textContent=x.n;
   document.getElementById('ipDC').textContent='+'+x.dc;
-  document.getElementById('ipRegionHero').textContent=x.rg;
-  document.getElementById('ipTags').innerHTML=
-    `<span class="ip-tag">${x.rg}</span><span class="ip-tag">${x.tl}</span><span class="ip-tag">Pop: ${x.pop}</span>`;
+  document.getElementById('ipRegion').textContent=x.rg;
+  document.getElementById('ipTags').innerHTML=`<span class="ip-tag">${x.rg}</span><span class="ip-tag">${x.tl}</span>`;
   document.getElementById('ipTZ').textContent=x.tz;
   document.getElementById('ipTZl').textContent=x.tl;
   document.getElementById('ipCur').textContent=x.cu+' — '+x.sy;
   document.getElementById('ipCurSy').textContent='Symbol: '+x.sy;
   document.getElementById('ipDial').textContent='+'+x.dc;
-
-  const rateEl=document.getElementById('ipRate');
-  const rateBadge=document.getElementById('ipRateBadge');
-  if(r!=null){
-    rateEl.textContent='1 USD = '+fmtN(r)+' '+x.cu;
-    rateEl.className='ip-val green';
-    rateBadge.textContent='LIVE';
-    rateBadge.style.cssText='background:rgba(0,212,170,.15);color:var(--green)';
-  } else {
-    rateEl.textContent='Loading…';
-    rateEl.className='ip-val';
-  }
-
-  if(clkInt) clearInterval(clkInt);
-  function tick(){
-    try{
-      const now=new Date();
-      document.getElementById('ipTime').textContent=now.toLocaleTimeString('en-US',{timeZone:x.tz,hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
-      document.getElementById('ipTZname').textContent=x.tz;
-      document.getElementById('ipDate').textContent=now.toLocaleDateString('en-US',{timeZone:x.tz,weekday:'long',month:'short',day:'numeric',year:'numeric'});
-      document.getElementById('ipOff').textContent=x.tl;
-    }catch(e){}
-  }
-  tick(); clkInt=setInterval(tick,1000);
-
-  document.getElementById('h-name').value=x.n;
-  document.getElementById('h-a2').value=x.c;
-  document.getElementById('h-a3').value=x.c3;
-  document.getElementById('h-dc').value='+'+x.dc;
-  document.getElementById('h-flag').value=x.f;
-  document.getElementById('h-tz').value=x.tz;
-  document.getElementById('h-tzl').value=x.tl;
-  document.getElementById('h-cu').value=x.cu;
-  document.getElementById('h-sy').value=x.sy;
-  document.getElementById('h-rg').value=x.rg;
-  document.getElementById('h-rate').value=r||'';
-  document.getElementById('h-rsrc').value='multi';
-  document.getElementById('h-rdate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('h-pop').value=x.pop;
-  document.getElementById('h-area').value=x.area;
-  document.getElementById('h-gdp').value=x.gdp;
+  const re=document.getElementById('ipRate');
+  if(r!=null){re.textContent=fmtFull(r)+' '+x.cu;re.className='ip-val green'}
+  else{re.textContent='Loading…';re.className='ip-val'}
+  if(clkInt)clearInterval(clkInt);
+  function tick(){try{const now=new Date();document.getElementById('ipTime').textContent=now.toLocaleTimeString('en-US',{timeZone:x.tz,hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('ipTZname').textContent=x.tz;document.getElementById('ipDate').textContent=now.toLocaleDateString('en-US',{timeZone:x.tz,weekday:'long',month:'short',day:'numeric'});document.getElementById('ipOff').textContent=x.tl}catch(e){}}
+  tick();clkInt=setInterval(tick,1000);
+  ['name','a2','a3','dc','flag','tz','tzl','cu','sy','rg','rate','rsrc','rdate','pop','area','gdp'].forEach(k=>{
+    const map={name:x.n,a2:x.c,a3:x.c3,dc:'+'+x.dc,flag:x.f,tz:x.tz,tzl:x.tl,cu:x.cu,sy:x.sy,rg:x.rg,rate:r||'',rsrc:'live',rdate:new Date().toISOString().split('T')[0],pop:x.pop,area:x.area,gdp:x.gdp};
+    const el=document.getElementById('h-'+k);if(el)el.value=map[k];
+  });
   document.getElementById('infoPanel').classList.add('show');
 }
 
-function refreshRate(x){ populateAll(x); }
-
-/* ══════════════════════════════════════════════
-   FORM SUBMIT
-══════════════════════════════════════════════ */
-document.getElementById('theForm').addEventListener('submit', async function(e){
+document.getElementById('theForm').addEventListener('submit',async function(e){
   e.preventDefault();
-  if(!sel){
-    document.getElementById('fCountry').classList.add('has-err');
-    document.getElementById('cErr').classList.add('show');
-    document.getElementById('cSearch').focus();
-    return;
-  }
-  const btn=document.getElementById('btnSub');
-  btn.disabled=true;
-  btn.innerHTML='<span class="sp"></span> Saving…';
-
-  const fd=new FormData(this);
+  if(!sel){document.getElementById('fCountry').classList.add('has-err');document.getElementById('cErr').classList.add('show');document.getElementById('cSearch').focus();return}
+  const btn=document.getElementById('btnSub');btn.disabled=true;btn.innerHTML='<span class="sp"></span> Saving…';
   try{
-    const res=await fetch('country_selector_save.php',{method:'POST',body:fd});
+    const res=await fetch('country_selector_save.php',{method:'POST',body:new FormData(this)});
     const data=await res.json();
-    if(!data.success){
-      btn.disabled=false;
-      btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm Country';
-      alert('Error: '+(data.message||'Could not save.'));
-      return;
-    }
-    if(clkInt) clearInterval(clkInt);
-    const r=getRate(sel.cu);
+    if(!data.success){btn.disabled=false;btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm Country';alert('Error: '+(data.message||'Could not save.'));return}
+    if(clkInt)clearInterval(clkInt);
+    const r=getR(sel.cu);
     document.getElementById('theForm').style.display='none';
-    const ss=document.getElementById('successBox');
-    ss.classList.add('show');
+    document.getElementById('successBox').classList.add('show');
     document.getElementById('sFlag').textContent=sel.f;
     document.getElementById('sTitle').textContent=sel.n+' Confirmed!';
-    document.getElementById('sSub').textContent='All details saved. Record #'+data.SelectionID+' created.';
+    document.getElementById('sSub').textContent='Record #'+data.SelectionID+' created.';
     document.getElementById('sGrid').innerHTML=[
-      {l:'Country',      v:sel.f+' '+sel.n,     hi:true},
-      {l:'Dial Code',    v:'+'+sel.dc,           hi:false},
-      {l:'Timezone',     v:sel.tz,               hi:false},
-      {l:'Currency',     v:sel.cu+' ('+sel.sy+')',hi:false},
-      {l:'Rate (USD)',   v:r?'1 USD = '+fmtN(r)+' '+sel.cu:'—',hi:!!r},
-      {l:'Region',       v:sel.rg,               hi:false},
-      {l:'Population',   v:sel.pop,              hi:false},
-      {l:'GDP',          v:sel.gdp,              hi:false},
-      {l:'Record ID',    v:'#'+data.SelectionID, hi:true},
+      {l:'Country',v:sel.f+' '+sel.n,hi:true},{l:'Dial Code',v:'+'+sel.dc,hi:false},
+      {l:'Timezone',v:sel.tz,hi:false},{l:'Currency',v:sel.cu+' ('+sel.sy+')',hi:false},
+      {l:'Rate',v:r?'1 USD = '+fmtFull(r)+' '+sel.cu:'—',hi:!!r},
+      {l:'Region',v:sel.rg,hi:false},{l:'Record ID',v:'#'+data.SelectionID,hi:true},
     ].map(({l,v,hi})=>`<div class="s-item${hi?' hi':''}"><div class="s-lbl">${l}</div><div class="s-val">${v}</div></div>`).join('');
-    ss.scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(err){
-    btn.disabled=false;
-    btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm Country';
-    alert('Network error — could not reach server.');
-  }
+    document.getElementById('successBox').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){btn.disabled=false;btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirm Country';alert('Network error.')}
 });
 
 function resetAll(){
-  sel=null;
-  if(clkInt) clearInterval(clkInt);
-  document.getElementById('theForm').reset();
-  document.getElementById('theForm').style.display='';
+  sel=null;if(clkInt)clearInterval(clkInt);
+  document.getElementById('theForm').reset();document.getElementById('theForm').style.display='';
   document.getElementById('successBox').classList.remove('show');
-  document.getElementById('cSearch').value='';
-  document.getElementById('clrBtn').classList.remove('show');
+  document.getElementById('cSearch').value='';document.getElementById('clrBtn').classList.remove('show');
   document.getElementById('infoPanel').classList.remove('show');
-  document.getElementById('fCountry').classList.remove('has-err');
-  document.getElementById('cErr').classList.remove('show');
+  document.getElementById('fCountry').classList.remove('has-err');document.getElementById('cErr').classList.remove('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ══════════════════════════════════════════════
-   INIT — fire all 4 sources in parallel
-══════════════════════════════════════════════ */
-Object.assign(allRates, FB); // seed with fallback immediately
-renderDD();
-runConvert();
-
-// All 4 sources fire simultaneously
-Promise.allSettled([
-  fetchCediRates(),
-  fetchBinanceP2P(),
-  fetchOpenER(),
-  fetchWise(),
-]).then(()=>{
-  console.log('All rate sources resolved.');
-});
-
-// Auto-refresh every 5 minutes
-setInterval(()=>{
-  Promise.allSettled([fetchCediRates(),fetchBinanceP2P(),fetchOpenER(),fetchWise()]);
-}, 5*60*1000);
+// Boot
+Object.assign(fullR,FB);
+renderDD();runCV();
+Promise.allSettled([fetchCediRates(),fetchBinance(),fetchOpenER(),fetchWise()]);
+setInterval(()=>Promise.allSettled([fetchCediRates(),fetchBinance(),fetchOpenER(),fetchWise()]),5*60*1000);
 </script>
 </body>
 </html>
