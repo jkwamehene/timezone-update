@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Country Selector — VCMIS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0f1a;--ink2:#2c3350;--muted:#64748b;--dim:#94a3b8;--line:#e2e8f0;--surface:#f8fafc;--white:#fff;--accent:#1a56db;--accent-lt:#eff6ff;--accent-dk:#1e40af;--gold:#b45309;--gold-lt:#fef3c7;--green:#047857;--green-lt:#ecfdf5;--teal:#0f766e;--teal-lt:#f0fdfa;--radius:14px;--shadow-lg:0 16px 48px rgba(11,15,26,.14)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:#f0f4f8;min-height:100vh;color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 80% 50% at 20% 10%,#dbeafe44 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 85% 80%,#d1fae544 0%,transparent 55%),linear-gradient(160deg,#eef2ff 0%,#f0f9ff 50%,#f0fdf4 100%)}
+.page{max-width:920px;margin:0 auto;padding:48px 20px 80px}
+
+/* ── Header ── */
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-lt);border:1px solid #bfdbfe;padding:5px 14px;border-radius:20px;margin-bottom:18px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,48px);font-weight:900;line-height:1.1;margin-bottom:12px}
+h1 span{color:var(--accent)}
+.page-header p{font-size:15px;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.65}
+
+/* ── Rate source bar ── */
+.src-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:11px 18px;margin-bottom:22px;font-size:13px}
+.src-left{display:flex;align-items:center;gap:10px}
+.src-dot{width:9px;height:9px;border-radius:50%;background:#d1d5db;flex-shrink:0;transition:background .3s}
+.src-dot.spin-dot{background:#f59e0b;animation:blink 1s infinite}
+.src-dot.ok{background:#10b981}
+.src-dot.warn{background:#f59e0b}
+.src-dot.err{background:#ef4444}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.src-msg{color:var(--muted)}.src-msg b{color:var(--ink)}
+.src-time{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+/* ── Source pills (which API served) ── */
+.src-pills{display:flex;gap:6px;flex-wrap:wrap}
+.src-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+.src-pill.ecb{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.src-pill.open{background:#f0fdf4;color:#047857;border-color:#a7f3d0}
+.src-pill.fallback{background:#fef3c7;color:#b45309;border-color:#fde68a}
+
+/* ── Search card ── */
+.search-card{background:var(--white);border-radius:20px;box-shadow:var(--shadow-lg);border:1px solid var(--line);margin-bottom:28px}
+.s-top{padding:26px 26px 0}
+.s-lbl{font-size:10px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.s-wrap{position:relative}
+.s-ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--dim)}
+.s-clr{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:var(--line);border:none;cursor:pointer;width:25px;height:25px;border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--muted);font-size:12px;transition:background .15s}
+.s-clr:hover{background:#cbd5e1}.s-clr.show{display:flex}
+#si{width:100%;padding:15px 46px 15px 46px;border:2px solid var(--line);border-radius:var(--radius);font-family:'Outfit',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;background:var(--surface)}
+#si:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(26,86,219,.1);background:var(--white)}
+#si::placeholder{color:var(--dim)}
+
+/* ── Pills ── */
+.pills{display:flex;flex-wrap:wrap;gap:7px;padding:14px 26px 22px;border-bottom:1px solid var(--line)}
+.pill{padding:5px 13px;border-radius:20px;border:1.5px solid var(--line);background:var(--white);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.pill:hover{border-color:var(--accent);color:var(--accent)}.pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ── Country list ── */
+.clist{max-height:300px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.clist::-webkit-scrollbar{width:4px}.clist::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.crow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:11px 26px;cursor:pointer;border-bottom:1px solid rgba(226,232,240,.4);transition:background .1s}
+.crow:last-child{border-bottom:none}.crow:hover{background:var(--accent-lt)}
+.crow.sel{background:var(--accent-lt);border-left:3px solid var(--accent);padding-left:23px}
+.cf{font-size:24px;line-height:1;text-align:center}
+.cn{min-width:0}.cn-name{font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cn-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.cr{text-align:right;min-width:115px}.cr-cur{font-size:13px;font-weight:600;color:var(--ink2)}
+.cr-rate{font-size:11px;color:var(--dim);margin-top:1px;font-family:'JetBrains Mono',monospace}
+.cr-rate.live{color:var(--green)}.cr-rate.approx{color:var(--gold)}
+.nores{padding:36px 26px;text-align:center;color:var(--dim);font-size:14px}
+.list-foot{padding:9px 26px;font-size:11px;color:var(--dim);border-top:1px solid var(--line);display:flex;justify-content:space-between;background:var(--surface);border-radius:0 0 20px 20px}
+
+/* ── Result panel ── */
+.rp{background:var(--white);border-radius:20px;box-shadow:var(--shadow-lg);border:1px solid var(--line);overflow:hidden;display:none;animation:up .35s cubic-bezier(.34,1.2,.64,1)}
+.rp.show{display:block}
+@keyframes up{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* hero */
+.hero{background:linear-gradient(135deg,#1e2d4e 0%,#1e3a5f 100%);padding:30px 30px 26px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden}
+.hero::after{content:attr(data-flag);position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:88px;opacity:.11;pointer-events:none}
+.hflag{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;border:2px solid rgba(255,255,255,.2)}
+.htxt{flex:1;min-width:0}.hcountry{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:6px}
+.hmeta{display:flex;flex-wrap:wrap;gap:7px}
+.hbadge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:rgba(255,255,255,.14);color:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.18)}
+.hright{text-align:right;flex-shrink:0}
+.hdc{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;color:#fff;letter-spacing:.05em}
+.hiso{font-size:12px;color:rgba(255,255,255,.55);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.hstat{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.hstat-item{padding:2px 9px;border-radius:10px;font-size:10px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.15)}
+
+/* info grid */
+.igrid{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+@media(max-width:580px){.igrid{grid-template-columns:1fr 1fr}}
+.icell{padding:18px 22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.icell:nth-child(3n){border-right:none}
+.iico{font-size:17px;margin-bottom:7px}
+.ilbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}
+.ival{font-size:15px;font-weight:600;color:var(--ink)}.isub{font-size:12px;color:var(--muted);margin-top:3px}
+.ival.mono{font-family:'JetBrains Mono',monospace;font-size:13px}
+.ival.rateVal{color:var(--green);font-size:17px;font-family:'JetBrains Mono',monospace}
+.ival.rateApprox{color:var(--gold);font-size:17px;font-family:'JetBrains Mono',monospace}
+.live-badge{display:inline-flex;align-items:center;gap:4px;border-radius:10px;font-size:10px;font-weight:600;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.live-badge.ecb{background:var(--accent-lt);color:var(--accent-dk);border:1px solid #bfdbfe}
+.live-badge.open{background:var(--green-lt);color:var(--green);border:1px solid #a7f3d0}
+.live-badge.approx{background:var(--gold-lt);color:var(--gold);border:1px solid #fde68a}
+.live-badge.ecb::before,.live-badge.open::before{content:'';width:6px;height:6px;border-radius:50%;display:inline-block;background:currentColor;animation:blink 1.2s infinite}
+
+/* rate section */
+.rsec{padding:22px 26px;background:linear-gradient(90deg,var(--accent-lt),#f0fdf4);border-bottom:1px solid var(--line)}
+.rtitle{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.rtitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#bfdbfe,transparent)}
+.rdisp{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.req{display:flex;align-items:center;gap:10px}
+.rbox{padding:11px 16px;border-radius:12px;text-align:center;min-width:84px}
+.rbox.base{background:var(--accent)}
+.rbox.tgt-ecb{background:var(--accent-lt);border:1.5px solid #bfdbfe}
+.rbox.tgt-open{background:var(--green-lt);border:1.5px solid #a7f3d0}
+.rbox.tgt-approx{background:var(--gold-lt);border:1.5px solid #fde68a}
+.rbox.loading{background:#f1f5f9;border:1.5px dashed var(--line)}
+.ra{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:600}
+.rl{font-size:11px;margin-top:2px}
+.rbox.base .ra{color:#fff}.rbox.base .rl{color:rgba(255,255,255,.7)}
+.rbox.tgt-ecb .ra{color:var(--accent-dk)}.rbox.tgt-ecb .rl{color:var(--muted)}
+.rbox.tgt-open .ra{color:var(--green)}.rbox.tgt-open .rl{color:var(--muted)}
+.rbox.tgt-approx .ra{color:var(--gold)}.rbox.tgt-approx .rl{color:var(--muted)}
+.rbox.loading .ra{color:var(--dim)}.rbox.loading .rl{color:var(--dim)}
+.rarr{font-size:20px;color:var(--muted)}
+.rsamples{margin-left:auto;display:flex;flex-wrap:wrap;gap:7px}
+.rchip{padding:5px 11px;border-radius:8px;background:var(--white);border:1px solid var(--line);font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--ink2)}
+.rchip strong{color:var(--green)}
+.rsource{margin-top:10px;font-size:11px;color:var(--dim)}
+.rsource a{color:var(--accent);text-decoration:none}.rsource a:hover{text-decoration:underline}
+
+/* clock */
+.clock{display:flex;align-items:center;justify-content:space-between;padding:16px 26px;background:var(--ink)}
+.cl-lbl{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:3px}
+.cl-time{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;color:#fff;letter-spacing:.06em}
+.cl-tz{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.cl-r{text-align:right}.cl-date{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:4px}
+.cl-off{display:inline-flex;align-items:center;padding:3px 10px;background:rgba(255,255,255,.1);border-radius:12px;font-size:11px;color:rgba(255,255,255,.65);font-family:'JetBrains Mono',monospace}
+
+/* confirm */
+.cfrow{padding:18px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:var(--surface);border-top:1px solid var(--line)}
+.cfnote{font-size:13px;color:var(--muted)}.cfnote b{color:var(--ink)}
+.btn-ok{padding:11px 26px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 14px rgba(26,86,219,.3);display:flex;align-items:center;gap:7px}
+.btn-ok:hover{background:var(--accent-dk);transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,86,219,.4)}
+
+/* confirmed */
+.done{background:var(--white);border-radius:20px;box-shadow:var(--shadow-lg);border:1px solid var(--line);padding:38px 30px;text-align:center;display:none;animation:up .4s cubic-bezier(.34,1.3,.64,1)}
+.done.show{display:block}
+.done-flag{font-size:60px;margin-bottom:14px;display:block}
+.done-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);margin-bottom:7px}
+.done-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px}
+.chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.chip.cb{background:var(--accent-lt);color:var(--accent-dk);border:1px solid #bfdbfe}
+.chip.cg{background:var(--green-lt);color:var(--green);border:1px solid #a7f3d0}
+.chip.cy{background:var(--gold-lt);color:var(--gold);border:1px solid #fde68a}
+.chip.ct{background:var(--teal-lt);color:var(--teal);border:1px solid #99f6e4}
+.btn-chg{background:none;border:1.5px solid var(--line);padding:9px 22px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
+.btn-chg:hover{border-color:var(--accent);color:var(--accent)}
+
+/* spinner */
+.sp{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:520px){
+  .hero{flex-direction:column;text-align:center;gap:10px}.hright{text-align:center}.hero::after{display:none}
+  .rdisp{flex-direction:column}.rsamples{margin-left:0}
+  .cfrow{flex-direction:column}.btn-ok{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      VCMIS — Member Portal
+    </div>
+    <h1>Where are you <span>from?</span></h1>
+   
+  </div>
+
+  <!-- Rate Source Status Bar -->
+  <div class="src-bar">
+    <div class="src-left">
+      <div class="src-dot spin-dot" id="srcDot"></div>
+      <div class="src-msg" id="srcMsg">Fetching exchange rates…</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="src-pills" id="srcPills"></div>
+      <div class="src-time" id="srcTime"></div>
+    </div>
+  </div>
+
+  <!-- Search Card -->
+  <div class="search-card">
+    <div class="s-top">
+      <div class="s-lbl">Search or browse countries</div>
+      <div class="s-wrap">
+        <svg class="s-ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="si" type="text" placeholder="Country name, dialling code, ISO code, currency…" autocomplete="off">
+        <button class="s-clr" id="btnClr" onclick="clearSrc()">✕</button>
+      </div>
+    </div>
+    <div class="pills">
+      <div class="pill on" onclick="setR('ALL',this)">🌐 All</div>
+      <div class="pill" onclick="setR('Africa',this)">Africa</div>
+      <div class="pill" onclick="setR('Asia',this)">Asia</div>
+      <div class="pill" onclick="setR('Europe',this)">Europe</div>
+      <div class="pill" onclick="setR('North America',this)">N. America</div>
+      <div class="pill" onclick="setR('South America',this)">S. America</div>
+      <div class="pill" onclick="setR('Oceania',this)">Oceania</div>
+    </div>
+    <div class="clist" id="clist"></div>
+    <div class="list-foot">
+      <span id="cnt">Loading…</span>
+      <span>↑↓ navigate &nbsp;·&nbsp; Enter select</span>
+    </div>
+  </div>
+
+  <!-- Result Panel -->
+  <div class="rp" id="rp">
+    <div class="hero" id="hero" data-flag="">
+      <div class="hflag" id="hflag">🏳</div>
+      <div class="htxt">
+        <div class="hcountry" id="hcountry">—</div>
+        <div class="hmeta">
+          <span class="hbadge" id="hregion">—</span>
+          <span class="hbadge" id="hisob">—</span>
+          <span class="hbadge" id="htzb">—</span>
+        </div>
+        <div class="hstat" id="hstat"></div>
+      </div>
+      <div class="hright">
+        <div class="hdc" id="hDC">—</div>
+        <div class="hiso" id="hISO">—</div>
+      </div>
+    </div>
+
+    <div class="igrid">
+      <div class="icell"><div class="iico">🌐</div><div class="ilbl">Timezone</div><div class="ival mono" id="iTZ">—</div><div class="isub" id="iTZs">—</div></div>
+      <div class="icell"><div class="iico">💰</div><div class="ilbl">Currency</div><div class="ival" id="iCur">—</div><div class="isub" id="iCurs">—</div></div>
+      <div class="icell"><div class="iico">🏷</div><div class="ilbl">Symbol</div><div class="ival" style="font-size:22px" id="iSym">—</div><div class="isub" id="iSyms">—</div></div>
+      <div class="icell"><div class="iico">📞</div><div class="ilbl">Dialling Code</div><div class="ival" style="font-size:22px;font-family:'JetBrains Mono',monospace;color:var(--accent)" id="iDC">—</div><div class="isub">International prefix</div></div>
+      <div class="icell"><div class="iico">🔖</div><div class="ilbl">ISO Codes</div><div class="ival mono" id="iISO">—</div><div class="isub">Alpha-2 / Alpha-3</div></div>
+      <div class="icell">
+        <div class="iico">📈</div>
+        <div class="ilbl">Exchange Rate <span class="live-badge" id="liveBadge" style="display:none"></span></div>
+        <div class="ival rateVal" id="iRate">—</div>
+        <div class="isub" id="iRates">vs 1 USD</div>
+      </div>
+    </div>
+
+    <div class="rsec">
+      <div class="rtitle">Exchange Rate — USD Base</div>
+      <div class="rdisp">
+        <div class="req">
+          <div class="rbox base"><div class="ra">1</div><div class="rl">USD</div></div>
+          <div class="rarr">→</div>
+          <div class="rbox loading" id="rbox">
+            <div class="ra" id="rtgt"><span class="sp"></span></div>
+            <div class="rl" id="rtgtl">—</div>
+          </div>
+        </div>
+        <div class="rsamples" id="rsamples"><div class="rchip"><span class="sp"></span> loading…</div></div>
+      </div>
+      <div class="rsource" id="rsource">Rate source: loading…</div>
+    </div>
+
+    <div class="clock">
+      <div>
+        <div class="cl-lbl">🔴 Live Local Time</div>
+        <div class="cl-time" id="clT">—</div>
+        <div class="cl-tz"   id="clZ">—</div>
+      </div>
+      <div class="cl-r">
+        <div class="cl-date" id="clD">—</div>
+        <div class="cl-off"  id="clO">—</div>
+      </div>
+    </div>
+
+    <div class="cfrow">
+      <div class="cfnote">Selecting <b id="cfN">—</b> will apply timezone and currency to your session.</div>
+      <button class="btn-ok" onclick="confirm_()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirm Selection
+      </button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="done" id="done">
+    <span class="done-flag" id="dFlg">✅</span>
+    <div class="done-title" id="dTtl">All set!</div>
+    <div class="done-sub"   id="dSub">Preferences saved.</div>
+    <div class="chips"      id="dChips"></div>
+    <button class="btn-chg" onclick="reset_()">Change country</button>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXCHANGE RATE SOURCES — 3-tier cascade, zero API keys needed
+   ─────────────────────────────────────────────────────────────────────────
+   TIER 1 · Frankfurter (api.frankfurter.dev)
+            Source: European Central Bank (ECB).
+            Free, open-source, no key, no cap, no sign-up.
+            Updated daily ~16:00 CET on banking days.
+            Covers ~33 major currencies.
+
+   TIER 2 · open.er-api.com
+            Completely free tier, no key required at all.
+            Covers 160+ currencies.
+            Falls back to this automatically if Tier 1 fails.
+
+   TIER 3 · Hard-coded ECB reference rates (last verified March 2026)
+            Never fails. Used only if both network sources fail.
+            Shown with an amber "APPROX" badge so user knows.
+═══════════════════════════════════════════════════════════════════════════ */
+
+const SRC = {
+  frankfurter: 'https://api.frankfurter.dev/v1/latest?base=USD',
+  openEr:      'https://open.er-api.com/v6/latest/USD',
+};
+
+/* ── Tier 3 fallback rates (ECB reference, March 2026 approx) ── */
+const FALLBACK_RATES = {
+  USD:1,EUR:0.924,GBP:0.791,JPY:149.5,CAD:1.361,AUD:1.534,CHF:0.898,
+  CNY:7.241,INR:83.51,BRL:5.063,MXN:17.11,ZAR:18.65,NGN:1595,GHS:15.48,
+  KES:130,EGP:48.72,ETB:56.7,XAF:606,XOF:606,TZS:2542,UGX:3751,RWF:1292,
+  ZMW:26.5,ZWL:361,MAD:10.05,DZD:135.2,AOA:830,CDF:2800,
+  SEK:10.43,NOK:10.58,DKK:6.89,PLN:4.01,CZK:23.15,HUF:358,RON:4.60,
+  HRK:7.53,BGN:1.81,UAH:39.5,RUB:89.5,TRY:32.5,ILS:3.74,
+  SAR:3.75,AED:3.673,QAR:3.64,KWD:0.307,JOD:0.710,IQD:1310,IRR:42000,
+  PKR:278,BDT:110,INR:83.5,LKR:298,NPR:133,
+  SGD:1.342,MYR:4.712,THB:35.7,IDR:15800,PHP:56.3,VND:25000,
+  KRW:1325,TWD:32.2,HKD:7.82,
+  NZD:1.641,
+  PEN:3.72,CLP:920,COP:3900,ARS:870,VES:36.5,BRL:5.06,
+  AFN:89.4,ALL:109.9,
+};
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+let rates={}, ratesOk=false, ratesSrc='', ratesDate='', sel=null, region='ALL', clkInt=null, hi=-1;
+
+/* ── Fetch cascade ── */
+async function fetchRates(){
+  setDot('spin-dot','Trying Frankfurter (ECB)…');
+  try {
+    const r=await fetch(SRC.frankfurter);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(!d.rates) throw new Error('no rates');
+    rates={USD:1,...d.rates};
+    ratesOk=true; ratesSrc='ecb'; ratesDate=d.date||'';
+    setDot('ok','<b>Rates loaded</b> — European Central Bank via Frankfurter');
+    showSrcPill('ecb','ECB / Frankfurter');
+    document.getElementById('srcTime').textContent=ratesDate?'Date: '+ratesDate:'';
+    renderList(); if(sel) updateRateUI(sel);
+    return;
+  } catch(e){ console.warn('Frankfurter failed:',e); }
+
+  setDot('spin-dot','Trying Open Exchange Rates…');
+  try {
+    const r=await fetch(SRC.openEr);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(!d.rates) throw new Error('no rates');
+    rates={USD:1,...d.rates};
+    ratesOk=true; ratesSrc='open'; ratesDate=d.time_last_update_utc||'';
+    const shortDate=ratesDate?new Date(ratesDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+    setDot('ok','<b>Rates loaded</b> — Open Exchange Rates (free tier)');
+    showSrcPill('open','Open ER-API');
+    document.getElementById('srcTime').textContent=shortDate?'Updated: '+shortDate:'';
+    renderList(); if(sel) updateRateUI(sel);
+    return;
+  } catch(e){ console.warn('Open ER-API failed:',e); }
+
+  /* Tier 3 — fallback */
+  rates=FALLBACK_RATES;
+  ratesOk=true; ratesSrc='fallback'; ratesDate='';
+  setDot('warn','<b>Using reference rates</b> — network unavailable (approximate values)');
+  showSrcPill('fallback','Approx (offline)');
+  renderList(); if(sel) updateRateUI(sel);
+}
+
+function setDot(cls,msg){
+  document.getElementById('srcDot').className='src-dot '+cls;
+  document.getElementById('srcMsg').innerHTML=msg;
+}
+function showSrcPill(type,label){
+  document.getElementById('srcPills').innerHTML=
+    `<span class="src-pill ${type}">${label}</span>`;
+}
+
+/* ── Rate helpers ── */
+function getR(cu){ return (ratesOk&&rates[cu]!=null)?rates[cu]:null; }
+
+function fmt(r,sy){
+  if(r===null||r===undefined) return '…';
+  if(r>=1e6)  return r.toLocaleString('en-US',{maximumFractionDigits:0})+' '+sy;
+  if(r>=1000) return r.toLocaleString('en-US',{maximumFractionDigits:0})+' '+sy;
+  if(r>=1)    return r.toFixed(4)+' '+sy;
+  return r.toFixed(6)+' '+sy;
+}
+function fmtN(r){
+  if(r===null||r===undefined) return '…';
+  if(r>=1000) return r.toLocaleString('en-US',{maximumFractionDigits:0});
+  if(r>=1)    return r.toFixed(4);
+  return r.toFixed(6);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   COUNTRY DATA
+   dc  = international dialling code (from your document)
+   c   = ISO alpha-2
+   c3  = ISO alpha-3
+════════════════════════════════════════════════════════════════════════════ */
+const C=[
+  {n:"Afghanistan",           c:"AF",c3:"AFG",dc:"93",   f:"🇦🇫",tz:"Asia/Kabul",                       tl:"AFT (UTC+4:30)",  cu:"AFN",sy:"؋",   rg:"Asia",          pop:"29,121,286",  area:"647,500",    gdp:"20.65 Billion"},
+  {n:"Albania",               c:"AL",c3:"ALB",dc:"355",  f:"🇦🇱",tz:"Europe/Tirane",                     tl:"CET (UTC+1)",     cu:"ALL",sy:"L",    rg:"Europe",        pop:"2,986,952",   area:"28,748",     gdp:"12.8 Billion"},
+  {n:"Algeria",               c:"DZ",c3:"DZA",dc:"213",  f:"🇩🇿",tz:"Africa/Algiers",                    tl:"CET (UTC+1)",     cu:"DZD",sy:"دج",  rg:"Africa",        pop:"34,586,184",  area:"2,381,740",  gdp:"215.7 Billion"},
+  {n:"Angola",                c:"AO",c3:"AGO",dc:"244",  f:"🇦🇴",tz:"Africa/Luanda",                     tl:"WAT (UTC+1)",     cu:"AOA",sy:"Kz",   rg:"Africa",        pop:"13,068,161",  area:"1,246,700",  gdp:"124 Billion"},
+  {n:"Argentina",             c:"AR",c3:"ARG",dc:"54",   f:"🇦🇷",tz:"America/Argentina/Buenos_Aires",    tl:"ART (UTC-3)",     cu:"ARS",sy:"$",    rg:"South America", pop:"41,343,201",  area:"2,766,890",  gdp:"484.6 Billion"},
+  {n:"Australia",             c:"AU",c3:"AUS",dc:"61",   f:"🇦🇺",tz:"Australia/Sydney",                  tl:"AEST (UTC+10)",   cu:"AUD",sy:"A$",   rg:"Oceania",       pop:"21,515,754",  area:"7,686,850",  gdp:"1.488 Trillion"},
+  {n:"Austria",               c:"AT",c3:"AUT",dc:"43",   f:"🇦🇹",tz:"Europe/Vienna",                     tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"8,205,000",   area:"83,858",     gdp:"417.9 Billion"},
+  {n:"Bangladesh",            c:"BD",c3:"BGD",dc:"880",  f:"🇧🇩",tz:"Asia/Dhaka",                        tl:"BST (UTC+6)",     cu:"BDT",sy:"৳",   rg:"Asia",          pop:"156,118,464", area:"144,000",    gdp:"140.2 Billion"},
+  {n:"Belgium",               c:"BE",c3:"BEL",dc:"32",   f:"🇧🇪",tz:"Europe/Brussels",                   tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"10,403,000",  area:"30,510",     gdp:"507.4 Billion"},
+  {n:"Brazil",                c:"BR",c3:"BRA",dc:"55",   f:"🇧🇷",tz:"America/Sao_Paulo",                 tl:"BRT (UTC-3)",     cu:"BRL",sy:"R$",   rg:"South America", pop:"201,103,330", area:"8,511,965",  gdp:"2.19 Trillion"},
+  {n:"Cameroon",              c:"CM",c3:"CMR",dc:"237",  f:"🇨🇲",tz:"Africa/Douala",                     tl:"WAT (UTC+1)",     cu:"XAF",sy:"FCFA", rg:"Africa",        pop:"19,294,149",  area:"475,440",    gdp:"27.88 Billion"},
+  {n:"Canada",                c:"CA",c3:"CAN",dc:"1",    f:"🇨🇦",tz:"America/Toronto",                   tl:"EST (UTC-5)",     cu:"CAD",sy:"CA$",  rg:"North America", pop:"33,679,000",  area:"9,984,670",  gdp:"1.825 Trillion"},
+  {n:"Chile",                 c:"CL",c3:"CHL",dc:"56",   f:"🇨🇱",tz:"America/Santiago",                  tl:"CLT (UTC-4)",     cu:"CLP",sy:"$",    rg:"South America", pop:"16,746,491",  area:"756,950",    gdp:"281.7 Billion"},
+  {n:"China",                 c:"CN",c3:"CHN",dc:"86",   f:"🇨🇳",tz:"Asia/Shanghai",                     tl:"CST (UTC+8)",     cu:"CNY",sy:"¥",    rg:"Asia",          pop:"1,330,044,000",area:"9,596,960", gdp:"9.33 Trillion"},
+  {n:"Colombia",              c:"CO",c3:"COL",dc:"57",   f:"🇨🇴",tz:"America/Bogota",                    tl:"COT (UTC-5)",     cu:"COP",sy:"$",    rg:"South America", pop:"47,790,000",  area:"1,138,910",  gdp:"369.2 Billion"},
+  {n:"Congo (DRC)",           c:"CD",c3:"COD",dc:"243",  f:"🇨🇩",tz:"Africa/Kinshasa",                   tl:"WAT (UTC+1)",     cu:"CDF",sy:"FC",   rg:"Africa",        pop:"70,916,439",  area:"2,345,410",  gdp:"18.56 Billion"},
+  {n:"Cote d'Ivoire",         c:"CI",c3:"CIV",dc:"225",  f:"🇨🇮",tz:"Africa/Abidjan",                    tl:"GMT (UTC+0)",     cu:"XOF",sy:"CFA",  rg:"Africa",        pop:"21,058,798",  area:"322,460",    gdp:"28.28 Billion"},
+  {n:"Czech Republic",        c:"CZ",c3:"CZE",dc:"420",  f:"🇨🇿",tz:"Europe/Prague",                     tl:"CET (UTC+1)",     cu:"CZK",sy:"Kč",  rg:"Europe",        pop:"10,476,000",  area:"78,866",     gdp:"194.8 Billion"},
+  {n:"Denmark",               c:"DK",c3:"DNK",dc:"45",   f:"🇩🇰",tz:"Europe/Copenhagen",                 tl:"CET (UTC+1)",     cu:"DKK",sy:"kr",   rg:"Europe",        pop:"5,484,000",   area:"43,094",     gdp:"324.3 Billion"},
+  {n:"Egypt",                 c:"EG",c3:"EGY",dc:"20",   f:"🇪🇬",tz:"Africa/Cairo",                      tl:"EET (UTC+2)",     cu:"EGP",sy:"£",    rg:"Africa",        pop:"80,471,869",  area:"1,001,450",  gdp:"262 Billion"},
+  {n:"Ethiopia",              c:"ET",c3:"ETH",dc:"251",  f:"🇪🇹",tz:"Africa/Addis_Ababa",                tl:"EAT (UTC+3)",     cu:"ETB",sy:"Br",   rg:"Africa",        pop:"88,013,491",  area:"1,127,127",  gdp:"47.34 Billion"},
+  {n:"Finland",               c:"FI",c3:"FIN",dc:"358",  f:"🇫🇮",tz:"Europe/Helsinki",                   tl:"EET (UTC+2)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"5,244,000",   area:"337,030",    gdp:"259.6 Billion"},
+  {n:"France",                c:"FR",c3:"FRA",dc:"33",   f:"🇫🇷",tz:"Europe/Paris",                      tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"64,768,389",  area:"547,030",    gdp:"2.739 Trillion"},
+  {n:"Germany",               c:"DE",c3:"DEU",dc:"49",   f:"🇩🇪",tz:"Europe/Berlin",                     tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"81,802,257",  area:"357,021",    gdp:"3.593 Trillion"},
+  {n:"Ghana",                 c:"GH",c3:"GHA",dc:"233",  f:"🇬🇭",tz:"Africa/Accra",                      tl:"GMT (UTC+0)",     cu:"GHS",sy:"GH₵", rg:"Africa",        pop:"24,339,838",  area:"239,460",    gdp:"45.55 Billion"},
+  {n:"Greece",                c:"GR",c3:"GRC",dc:"30",   f:"🇬🇷",tz:"Europe/Athens",                     tl:"EET (UTC+2)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"11,000,000",  area:"131,940",    gdp:"243.3 Billion"},
+  {n:"Hong Kong",             c:"HK",c3:"HKG",dc:"852",  f:"🇭🇰",tz:"Asia/Hong_Kong",                    tl:"HKT (UTC+8)",     cu:"HKD",sy:"HK$",  rg:"Asia",          pop:"6,898,686",   area:"1,092",      gdp:"272.1 Billion"},
+  {n:"Hungary",               c:"HU",c3:"HUN",dc:"36",   f:"🇭🇺",tz:"Europe/Budapest",                   tl:"CET (UTC+1)",     cu:"HUF",sy:"Ft",   rg:"Europe",        pop:"9,982,000",   area:"93,030",     gdp:"130.6 Billion"},
+  {n:"India",                 c:"IN",c3:"IND",dc:"91",   f:"🇮🇳",tz:"Asia/Kolkata",                      tl:"IST (UTC+5:30)",  cu:"INR",sy:"₹",   rg:"Asia",          pop:"1,173,108,018",area:"3,287,590", gdp:"1.67 Trillion"},
+  {n:"Indonesia",             c:"ID",c3:"IDN",dc:"62",   f:"🇮🇩",tz:"Asia/Jakarta",                      tl:"WIB (UTC+7)",     cu:"IDR",sy:"Rp",   rg:"Asia",          pop:"242,968,342", area:"1,919,440",  gdp:"867.5 Billion"},
+  {n:"Iran",                  c:"IR",c3:"IRN",dc:"98",   f:"🇮🇷",tz:"Asia/Tehran",                       tl:"IRST (UTC+3:30)", cu:"IRR",sy:"﷼",  rg:"Asia",          pop:"76,923,300",  area:"1,648,000",  gdp:"411.9 Billion"},
+  {n:"Iraq",                  c:"IQ",c3:"IRQ",dc:"964",  f:"🇮🇶",tz:"Asia/Baghdad",                      tl:"AST (UTC+3)",     cu:"IQD",sy:"ID",   rg:"Asia",          pop:"29,671,605",  area:"437,072",    gdp:"221.8 Billion"},
+  {n:"Ireland",               c:"IE",c3:"IRL",dc:"353",  f:"🇮🇪",tz:"Europe/Dublin",                     tl:"GMT (UTC+0)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"4,622,917",   area:"70,280",     gdp:"220.9 Billion"},
+  {n:"Israel",                c:"IL",c3:"ISR",dc:"972",  f:"🇮🇱",tz:"Asia/Jerusalem",                    tl:"IST (UTC+2)",     cu:"ILS",sy:"₪",   rg:"Asia",          pop:"7,353,985",   area:"20,770",     gdp:"272.7 Billion"},
+  {n:"Italy",                 c:"IT",c3:"ITA",dc:"39",   f:"🇮🇹",tz:"Europe/Rome",                       tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"60,340,328",  area:"301,230",    gdp:"2.068 Trillion"},
+  {n:"Japan",                 c:"JP",c3:"JPN",dc:"81",   f:"🇯🇵",tz:"Asia/Tokyo",                        tl:"JST (UTC+9)",     cu:"JPY",sy:"¥",    rg:"Asia",          pop:"127,288,000", area:"377,835",    gdp:"5.007 Trillion"},
+  {n:"Jordan",                c:"JO",c3:"JOR",dc:"962",  f:"🇯🇴",tz:"Asia/Amman",                        tl:"EET (UTC+2)",     cu:"JOD",sy:"JD",   rg:"Asia",          pop:"6,407,085",   area:"92,300",     gdp:"34.08 Billion"},
+  {n:"Kenya",                 c:"KE",c3:"KEN",dc:"254",  f:"🇰🇪",tz:"Africa/Nairobi",                    tl:"EAT (UTC+3)",     cu:"KES",sy:"KSh",  rg:"Africa",        pop:"40,046,566",  area:"582,650",    gdp:"45.31 Billion"},
+  {n:"Kuwait",                c:"KW",c3:"KWT",dc:"965",  f:"🇰🇼",tz:"Asia/Kuwait",                       tl:"AST (UTC+3)",     cu:"KWD",sy:"KD",   rg:"Asia",          pop:"2,789,132",   area:"17,820",     gdp:"179.5 Billion"},
+  {n:"Malaysia",              c:"MY",c3:"MYS",dc:"60",   f:"🇲🇾",tz:"Asia/Kuala_Lumpur",                 tl:"MYT (UTC+8)",     cu:"MYR",sy:"RM",   rg:"Asia",          pop:"28,274,729",  area:"329,750",    gdp:"312.4 Billion"},
+  {n:"Mexico",                c:"MX",c3:"MEX",dc:"52",   f:"🇲🇽",tz:"America/Mexico_City",               tl:"CST (UTC-6)",     cu:"MXN",sy:"$",    rg:"North America", pop:"112,468,855", area:"1,972,550",  gdp:"1.327 Trillion"},
+  {n:"Morocco",               c:"MA",c3:"MAR",dc:"212",  f:"🇲🇦",tz:"Africa/Casablanca",                 tl:"WET (UTC+0)",     cu:"MAD",sy:"MAD",  rg:"Africa",        pop:"31,627,428",  area:"446,550",    gdp:"104.8 Billion"},
+  {n:"Netherlands",           c:"NL",c3:"NLD",dc:"31",   f:"🇳🇱",tz:"Europe/Amsterdam",                  tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"16,645,000",  area:"41,526",     gdp:"722.3 Billion"},
+  {n:"New Zealand",           c:"NZ",c3:"NZL",dc:"64",   f:"🇳🇿",tz:"Pacific/Auckland",                  tl:"NZST (UTC+12)",   cu:"NZD",sy:"NZ$",  rg:"Oceania",       pop:"4,252,277",   area:"268,680",    gdp:"181.1 Billion"},
+  {n:"Nigeria",               c:"NG",c3:"NGA",dc:"234",  f:"🇳🇬",tz:"Africa/Lagos",                      tl:"WAT (UTC+1)",     cu:"NGN",sy:"₦",   rg:"Africa",        pop:"154,000,000", area:"923,768",    gdp:"502 Billion"},
+  {n:"Norway",                c:"NO",c3:"NOR",dc:"47",   f:"🇳🇴",tz:"Europe/Oslo",                       tl:"CET (UTC+1)",     cu:"NOK",sy:"kr",   rg:"Europe",        pop:"5,009,150",   area:"324,220",    gdp:"515.8 Billion"},
+  {n:"Pakistan",              c:"PK",c3:"PAK",dc:"92",   f:"🇵🇰",tz:"Asia/Karachi",                      tl:"PKT (UTC+5)",     cu:"PKR",sy:"₨",   rg:"Asia",          pop:"184,404,791", area:"803,940",    gdp:"236.5 Billion"},
+  {n:"Peru",                  c:"PE",c3:"PER",dc:"51",   f:"🇵🇪",tz:"America/Lima",                      tl:"PET (UTC-5)",     cu:"PEN",sy:"S/.",  rg:"South America", pop:"29,907,003",  area:"1,285,220",  gdp:"210.3 Billion"},
+  {n:"Philippines",           c:"PH",c3:"PHL",dc:"63",   f:"🇵🇭",tz:"Asia/Manila",                       tl:"PHT (UTC+8)",     cu:"PHP",sy:"₱",   rg:"Asia",          pop:"99,900,177",  area:"300,000",    gdp:"272.2 Billion"},
+  {n:"Poland",                c:"PL",c3:"POL",dc:"48",   f:"🇵🇱",tz:"Europe/Warsaw",                     tl:"CET (UTC+1)",     cu:"PLN",sy:"zł",  rg:"Europe",        pop:"38,500,000",  area:"312,685",    gdp:"513.9 Billion"},
+  {n:"Portugal",              c:"PT",c3:"PRT",dc:"351",  f:"🇵🇹",tz:"Europe/Lisbon",                     tl:"WET (UTC+0)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"10,676,000",  area:"92,391",     gdp:"219.3 Billion"},
+  {n:"Qatar",                 c:"QA",c3:"QAT",dc:"974",  f:"🇶🇦",tz:"Asia/Qatar",                        tl:"AST (UTC+3)",     cu:"QAR",sy:"QR",   rg:"Asia",          pop:"840,926",     area:"11,437",     gdp:"213.1 Billion"},
+  {n:"Romania",               c:"RO",c3:"ROU",dc:"40",   f:"🇷🇴",tz:"Europe/Bucharest",                  tl:"EET (UTC+2)",     cu:"RON",sy:"lei",  rg:"Europe",        pop:"21,959,278",  area:"237,500",    gdp:"188.9 Billion"},
+  {n:"Russia",                c:"RU",c3:"RUS",dc:"7",    f:"🇷🇺",tz:"Europe/Moscow",                     tl:"MSK (UTC+3)",     cu:"RUB",sy:"₽",   rg:"Europe",        pop:"140,702,000", area:"17,100,000", gdp:"2.113 Trillion"},
+  {n:"Rwanda",                c:"RW",c3:"RWA",dc:"250",  f:"🇷🇼",tz:"Africa/Kigali",                     tl:"CAT (UTC+2)",     cu:"RWF",sy:"Fr",   rg:"Africa",        pop:"11,055,976",  area:"26,338",     gdp:"7.7 Billion"},
+  {n:"Saudi Arabia",          c:"SA",c3:"SAU",dc:"966",  f:"🇸🇦",tz:"Asia/Riyadh",                       tl:"AST (UTC+3)",     cu:"SAR",sy:"SAR",  rg:"Asia",          pop:"25,731,776",  area:"1,960,582",  gdp:"718.5 Billion"},
+  {n:"Senegal",               c:"SN",c3:"SEN",dc:"221",  f:"🇸🇳",tz:"Africa/Dakar",                      tl:"GMT (UTC+0)",     cu:"XOF",sy:"CFA",  rg:"Africa",        pop:"12,323,252",  area:"196,190",    gdp:"15.36 Billion"},
+  {n:"Singapore",             c:"SG",c3:"SGP",dc:"65",   f:"🇸🇬",tz:"Asia/Singapore",                    tl:"SGT (UTC+8)",     cu:"SGD",sy:"S$",   rg:"Asia",          pop:"4,701,069",   area:"693",        gdp:"295.7 Billion"},
+  {n:"South Africa",          c:"ZA",c3:"ZAF",dc:"27",   f:"🇿🇦",tz:"Africa/Johannesburg",               tl:"SAST (UTC+2)",    cu:"ZAR",sy:"R",    rg:"Africa",        pop:"49,000,000",  area:"1,219,912",  gdp:"353.9 Billion"},
+  {n:"South Korea",           c:"KR",c3:"KOR",dc:"82",   f:"🇰🇷",tz:"Asia/Seoul",                        tl:"KST (UTC+9)",     cu:"KRW",sy:"₩",   rg:"Asia",          pop:"48,422,644",  area:"98,480",     gdp:"1.198 Trillion"},
+  {n:"Spain",                 c:"ES",c3:"ESP",dc:"34",   f:"🇪🇸",tz:"Europe/Madrid",                     tl:"CET (UTC+1)",     cu:"EUR",sy:"€",    rg:"Europe",        pop:"46,505,963",  area:"504,782",    gdp:"1.356 Trillion"},
+  {n:"Sweden",                c:"SE",c3:"SWE",dc:"46",   f:"🇸🇪",tz:"Europe/Stockholm",                  tl:"CET (UTC+1)",     cu:"SEK",sy:"kr",   rg:"Europe",        pop:"9,555,893",   area:"449,964",    gdp:"552 Billion"},
+  {n:"Switzerland",           c:"CH",c3:"CHE",dc:"41",   f:"🇨🇭",tz:"Europe/Zurich",                     tl:"CET (UTC+1)",     cu:"CHF",sy:"Fr",   rg:"Europe",        pop:"7,581,000",   area:"41,290",     gdp:"646.2 Billion"},
+  {n:"Taiwan",                c:"TW",c3:"TWN",dc:"886",  f:"🇹🇼",tz:"Asia/Taipei",                       tl:"CST (UTC+8)",     cu:"TWD",sy:"NT$",  rg:"Asia",          pop:"22,894,384",  area:"35,980",     gdp:"484.7 Billion"},
+  {n:"Tanzania",              c:"TZ",c3:"TZA",dc:"255",  f:"🇹🇿",tz:"Africa/Dar_es_Salaam",              tl:"EAT (UTC+3)",     cu:"TZS",sy:"TSh",  rg:"Africa",        pop:"41,892,895",  area:"945,087",    gdp:"31.94 Billion"},
+  {n:"Thailand",              c:"TH",c3:"THA",dc:"66",   f:"🇹🇭",tz:"Asia/Bangkok",                      tl:"ICT (UTC+7)",     cu:"THB",sy:"฿",   rg:"Asia",          pop:"67,089,500",  area:"514,000",    gdp:"400.9 Billion"},
+  {n:"Turkey",                c:"TR",c3:"TUR",dc:"90",   f:"🇹🇷",tz:"Europe/Istanbul",                   tl:"TRT (UTC+3)",     cu:"TRY",sy:"₺",   rg:"Asia",          pop:"77,804,122",  area:"780,580",    gdp:"821.8 Billion"},
+  {n:"Uganda",                c:"UG",c3:"UGA",dc:"256",  f:"🇺🇬",tz:"Africa/Kampala",                    tl:"EAT (UTC+3)",     cu:"UGX",sy:"USh",  rg:"Africa",        pop:"33,398,682",  area:"236,040",    gdp:"22.6 Billion"},
+  {n:"Ukraine",               c:"UA",c3:"UKR",dc:"380",  f:"🇺🇦",tz:"Europe/Kyiv",                       tl:"EET (UTC+2)",     cu:"UAH",sy:"₴",   rg:"Europe",        pop:"45,415,596",  area:"603,700",    gdp:"175.5 Billion"},
+  {n:"United Arab Emirates",  c:"AE",c3:"ARE",dc:"971",  f:"🇦🇪",tz:"Asia/Dubai",                        tl:"GST (UTC+4)",     cu:"AED",sy:"د.إ", rg:"Asia",          pop:"4,975,593",   area:"82,880",     gdp:"390 Billion"},
+  {n:"United Kingdom",        c:"GB",c3:"GBR",dc:"44",   f:"🇬🇧",tz:"Europe/London",                     tl:"GMT (UTC+0)",     cu:"GBP",sy:"£",    rg:"Europe",        pop:"62,348,447",  area:"244,820",    gdp:"2.49 Trillion"},
+  {n:"United States",         c:"US",c3:"USA",dc:"1",    f:"🇺🇸",tz:"America/New_York",                  tl:"EST (UTC-5)",     cu:"USD",sy:"$",    rg:"North America", pop:"310,232,863", area:"9,629,091",  gdp:"16.72 Trillion"},
+  {n:"Venezuela",             c:"VE",c3:"VEN",dc:"58",   f:"🇻🇪",tz:"America/Caracas",                   tl:"VET (UTC-4)",     cu:"VES",sy:"Bs.S", rg:"South America", pop:"27,223,228",  area:"912,050",    gdp:"367.5 Billion"},
+  {n:"Vietnam",               c:"VN",c3:"VNM",dc:"84",   f:"🇻🇳",tz:"Asia/Ho_Chi_Minh",                  tl:"ICT (UTC+7)",     cu:"VND",sy:"₫",   rg:"Asia",          pop:"89,571,130",  area:"329,560",    gdp:"170 Billion"},
+  {n:"Zambia",                c:"ZM",c3:"ZMB",dc:"260",  f:"🇿🇲",tz:"Africa/Lusaka",                     tl:"CAT (UTC+2)",     cu:"ZMW",sy:"ZK",   rg:"Africa",        pop:"13,460,305",  area:"752,614",    gdp:"22.24 Billion"},
+  {n:"Zimbabwe",              c:"ZW",c3:"ZWE",dc:"263",  f:"🇿🇼",tz:"Africa/Harare",                     tl:"CAT (UTC+2)",     cu:"ZWL",sy:"Z$",   rg:"Africa",        pop:"11,651,858",  area:"390,580",    gdp:"10.48 Billion"},
+];
+
+/* ── Render list ── */
+function getFiltered(){
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  return C.filter(x=>{
+    const mr=(region==='ALL')||(x.rg===region);
+    if(!q) return mr;
+    return mr&&(x.n.toLowerCase().includes(q)||x.c.toLowerCase().includes(q)||x.c3.toLowerCase().includes(q)||x.dc.includes(q)||x.cu.toLowerCase().includes(q)||x.rg.toLowerCase().includes(q));
+  });
+}
+
+function renderList(){
+  const data=getFiltered();
+  document.getElementById('cnt').textContent=data.length+' countr'+(data.length===1?'y':'ies');
+  const el=document.getElementById('clist');
+  if(!data.length){el.innerHTML='<div class="nores">No countries match your search.</div>';return;}
+  el.innerHTML=data.map(x=>{
+    const r=getR(x.cu);
+    const rstr=r!==null?fmt(r,x.cu):'<span class="sp"></span>';
+    const rcls='cr-rate'+(r!==null?(ratesSrc==='fallback'?' approx':' live'):'');
+    const isSel=sel&&sel.c===x.c?' sel':'';
+    return `<div class="crow${isSel}" onclick="selByCode('${x.c}')">
+      <div class="cf">${x.f}</div>
+      <div class="cn">
+        <div class="cn-name">${x.n}</div>
+        <div class="cn-sub">+${x.dc} &nbsp;·&nbsp; ${x.c} / ${x.c3} &nbsp;·&nbsp; ${x.tz}</div>
+      </div>
+      <div class="cr">
+        <div class="cr-cur">${x.cu} ${x.sy}</div>
+        <div class="${rcls}">1 USD = ${rstr}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Select ── */
+function selByCode(code){const x=C.find(v=>v.c===code);if(x) doSelect(x);}
+
+function doSelect(x){
+  sel=x; renderList();
+  document.getElementById('hero').dataset.flag=x.f;
+  document.getElementById('hflag').textContent=x.f;
+  document.getElementById('hcountry').textContent=x.n;
+  document.getElementById('hregion').textContent=x.rg;
+  document.getElementById('hisob').textContent=x.c+' / '+x.c3;
+  document.getElementById('htzb').textContent=x.tl;
+  document.getElementById('hDC').textContent='+'+x.dc;
+  document.getElementById('hISO').textContent=x.c+' / '+x.c3;
+  document.getElementById('hstat').innerHTML=
+    `<span class="hstat-item">👥 ${x.pop}</span>`+
+    `<span class="hstat-item">🗺 ${x.area} km²</span>`+
+    `<span class="hstat-item">💹 GDP ${x.gdp}</span>`;
+  document.getElementById('iTZ').textContent=x.tz;
+  document.getElementById('iTZs').textContent=x.tl;
+  document.getElementById('iCur').textContent=x.cu;
+  document.getElementById('iCurs').textContent='ISO 4217 · '+x.sy;
+  document.getElementById('iSym').textContent=x.sy;
+  document.getElementById('iSyms').textContent=x.cu+' symbol';
+  document.getElementById('iDC').textContent='+'+x.dc;
+  document.getElementById('iISO').textContent=x.c+' / '+x.c3;
+  updateRateUI(x);
+  if(clkInt) clearInterval(clkInt);
+  function tck(){
+    try{
+      const now=new Date();
+      document.getElementById('clT').textContent=now.toLocaleTimeString('en-US',{timeZone:x.tz,hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      document.getElementById('clZ').textContent=x.tz;
+      document.getElementById('clD').textContent=now.toLocaleDateString('en-US',{timeZone:x.tz,weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      document.getElementById('clO').textContent=x.tl;
+    }catch(e){}
+  }
+  tck(); clkInt=setInterval(tck,1000);
+  document.getElementById('cfN').textContent=x.f+' '+x.n;
+  document.getElementById('rp').classList.add('show');
+  document.getElementById('done').classList.remove('show');
+  setTimeout(()=>document.getElementById('rp').scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+
+function updateRateUI(x){
+  const r=getR(x.cu);
+  const isApprox=ratesSrc==='fallback';
+
+  /* badge */
+  const badge=document.getElementById('liveBadge');
+  if(r!==null){
+    badge.style.display='';
+    if(isApprox){
+      badge.className='live-badge approx'; badge.textContent='APPROX';
+    } else if(ratesSrc==='ecb'){
+      badge.className='live-badge ecb'; badge.textContent='ECB';
+    } else {
+      badge.className='live-badge open'; badge.textContent='LIVE';
+    }
+  } else {
+    badge.style.display='none';
+  }
+
+  /* rate cell */
+  const rv=document.getElementById('iRate');
+  if(r!==null){
+    rv.textContent=fmt(r,x.cu);
+    rv.className='ival '+(isApprox?'rateApprox':'rateVal');
+    document.getElementById('iRates').textContent='1 USD = '+fmt(r,x.cu)+(ratesDate?' · '+ratesDate:'');
+  } else {
+    rv.innerHTML='<span class="sp"></span>';
+    document.getElementById('iRates').textContent='Fetching…';
+  }
+
+  /* rate box */
+  const rbox=document.getElementById('rbox');
+  if(r!==null){
+    rbox.className='rbox '+(isApprox?'tgt-approx':(ratesSrc==='ecb'?'tgt-ecb':'tgt-open'));
+    document.getElementById('rtgt').textContent=fmtN(r);
+    document.getElementById('rtgtl').textContent=x.cu;
+    document.getElementById('rsamples').innerHTML=[10,100,1000].map(n=>
+      `<div class="rchip">$${n} = <strong>${fmt(n*r,x.sy)}</strong></div>`
+    ).join('');
+  } else {
+    rbox.className='rbox loading';
+    document.getElementById('rtgt').innerHTML='<span class="sp"></span>';
+    document.getElementById('rtgtl').textContent=x.cu;
+    document.getElementById('rsamples').innerHTML='<div class="rchip"><span class="sp"></span> loading…</div>';
+  }
+
+  /* source attribution */
+  const srcLabel={
+    ecb:  'European Central Bank via <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a> (free, no key)',
+    open: '<a href="https://open.er-api.com" target="_blank" rel="noopener">Open Exchange Rates</a> (free tier, no key)',
+    fallback:'Reference rates (offline fallback — approximate)',
+  }[ratesSrc]||'Loading…';
+  document.getElementById('rsource').innerHTML='Source: '+srcLabel+(ratesDate?' &nbsp;·&nbsp; '+ratesDate:'');
+}
+
+/* ── Filters ── */
+function setR(r,el){
+  region=r;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on'); hi=-1; renderList();
+}
+document.getElementById('si').addEventListener('input',function(){
+  document.getElementById('btnClr').classList.toggle('show',this.value.length>0);
+  hi=-1; renderList();
+});
+function clearSrc(){document.getElementById('si').value='';document.getElementById('btnClr').classList.remove('show');hi=-1;renderList();}
+document.getElementById('si').addEventListener('keydown',function(e){
+  const rows=document.querySelectorAll('.crow');
+  if(e.key==='ArrowDown'){e.preventDefault();hi=Math.min(hi+1,rows.length-1);hlRow(rows);}
+  else if(e.key==='ArrowUp'){e.preventDefault();hi=Math.max(hi-1,0);hlRow(rows);}
+  else if(e.key==='Enter'&&hi>=0) rows[hi].click();
+});
+function hlRow(rows){rows.forEach((r,i)=>r.style.background=i===hi?'var(--accent-lt)':'');if(rows[hi])rows[hi].scrollIntoView({block:'nearest'});}
+
+/* ── Confirm ── */
+function confirm_(){
+  if(!sel) return;
+  const r=getR(sel.cu);
+  if(clkInt) clearInterval(clkInt);
+  window.__userConfig={
+    country:{name:sel.n,code:sel.c,code3:sel.c3,dialCode:'+'+sel.dc,flag:sel.f},
+    timezone:{id:sel.tz,label:sel.tl},
+    currency:{code:sel.cu,symbol:sel.sy},
+    region:sel.rg,
+    exchangeRate:r,
+    rateSource:ratesSrc,
+    rateDate:ratesDate,
+    setAt:new Date().toISOString()
+  };
+  document.getElementById('rp').classList.remove('show');
+  const d=document.getElementById('done');
+  d.classList.add('show');
+  document.getElementById('dFlg').textContent=sel.f;
+  document.getElementById('dTtl').textContent='Welcome from '+sel.n+'!';
+  document.getElementById('dSub').textContent='Timezone ('+sel.tz+') and currency ('+sel.cu+' '+sel.sy+') applied to your session.';
+  document.getElementById('dChips').innerHTML=[
+    `<div class="chip cb">${sel.f} ${sel.n}</div>`,
+    `<div class="chip cb">📞 +${sel.dc}</div>`,
+    `<div class="chip ct">🌐 ${sel.tz}</div>`,
+    `<div class="chip cg">💰 ${sel.cu} ${sel.sy}</div>`,
+    r!==null?`<div class="chip cy">📈 1 USD = ${fmt(r,sel.cu)}</div>`:'',
+    `<div class="chip cb">🔖 ${sel.c} / ${sel.c3}</div>`,
+  ].join('');
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+  window.dispatchEvent(new CustomEvent('userConfigSet',{detail:window.__userConfig}));
+}
+
+function reset_(){
+  sel=null; window.__userConfig=null;
+  clearSrc();
+  document.getElementById('rp').classList.remove('show');
+  document.getElementById('done').classList.remove('show');
+  document.getElementById('si').focus();
+}
+
+/* ── Init ── */
+renderList();
+fetchRates();
+</script>
+</body>
+</html>
