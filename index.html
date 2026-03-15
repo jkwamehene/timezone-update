@@ -323,16 +323,6 @@ body::after{
   font-family:'JetBrains Mono',monospace;
 }
 
-/* Stats row */
-.ip-stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:1px;background:var(--line);
-  border-top:1px solid var(--line);
-}
-.ip-stat{background:var(--line2);padding:10px 14px}
-.ip-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:3px}
-.ip-stat-val{font-size:12px;font-weight:600;color:var(--ink2)}
-
 /* Hidden actual inputs for form submission */
 .hidden-fields{display:none}
 
@@ -543,22 +533,6 @@ body::after{
               <div class="ip-clock-right">
                 <div class="ic-date" id="ipDate">—</div>
                 <div class="ic-off"  id="ipOff">—</div>
-              </div>
-            </div>
-
-            <!-- Country stats -->
-            <div class="ip-stats">
-              <div class="ip-stat">
-                <div class="ip-stat-lbl">Population</div>
-                <div class="ip-stat-val" id="ipPop">—</div>
-              </div>
-              <div class="ip-stat">
-                <div class="ip-stat-lbl">Area km²</div>
-                <div class="ip-stat-val" id="ipArea">—</div>
-              </div>
-              <div class="ip-stat">
-                <div class="ip-stat-lbl">GDP (USD)</div>
-                <div class="ip-stat-val" id="ipGDP">—</div>
               </div>
             </div>
 
@@ -950,11 +924,6 @@ function populateAll(x){
     rateEl.className='ip-val';
     rateBadge.textContent='';
   }
-
-  // Stats
-  document.getElementById('ipPop').textContent=x.pop;
-  document.getElementById('ipArea').textContent=x.area+' km²';
-  document.getElementById('ipGDP').textContent=x.gdp;
 
   // ── Clock ──
   if(clkInt) clearInterval(clkInt);
