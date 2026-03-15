@@ -333,38 +333,8 @@ body::after{
 .ip-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:3px}
 .ip-stat-val{font-size:12px;font-weight:600;color:var(--ink2)}
 
-/* ══════════════════════════════════════════════
-   READ-ONLY DATA FIELDS (auto-filled)
-══════════════════════════════════════════════ */
-.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-@media(max-width:420px){.fields-grid{grid-template-columns:1fr}}
-.ro-field{
-  background:var(--line2);
-  border:1.5px solid var(--line);
-  border-radius:var(--r);
-  padding:11px 14px;
-  transition:border-color .2s;
-}
-.ro-field.filled{border-color:var(--accent-mid);background:var(--accent-lt)}
-.ro-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}
-.ro-val{font-size:13px;font-weight:600;color:var(--ink);font-family:'JetBrains Mono',monospace;min-height:18px}
-.ro-val.empty{color:var(--dim);font-family:'Mulish',sans-serif;font-weight:400;font-size:12px;font-style:italic}
-.ro-val.rate-live{color:var(--green)}
-.ro-val.rate-approx{color:var(--gold)}
-
 /* Hidden actual inputs for form submission */
 .hidden-fields{display:none}
-
-/* ══════════════════════════════════════════════
-   DIVIDER
-══════════════════════════════════════════════ */
-.divider{
-  display:flex;align-items:center;gap:10px;
-  margin:22px 0 18px;
-  color:var(--dim);font-size:10px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;
-}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
 
 /* ══════════════════════════════════════════════
    SUBMIT BUTTON
@@ -594,25 +564,6 @@ body::after{
 
           </div><!-- /info-panel -->
         </div><!-- /field -->
-
-        <!-- ── Auto-filled read-only display fields ── -->
-        <div class="divider">Auto-filled Details</div>
-
-        <div class="fields-grid">
-          <div class="ro-field" id="ro-country"><div class="ro-lbl">Country Name</div><div class="ro-val empty" id="rv-country">Not selected</div></div>
-          <div class="ro-field" id="ro-flag"><div class="ro-lbl">Flag</div><div class="ro-val empty" id="rv-flag" style="font-size:20px">—</div></div>
-          <div class="ro-field" id="ro-dc"><div class="ro-lbl">Country Code</div><div class="ro-val empty" id="rv-dc">—</div></div>
-          <div class="ro-field" id="ro-tz"><div class="ro-lbl">Timezone</div><div class="ro-val empty" id="rv-tz">—</div></div>
-          <div class="ro-field" id="ro-sy"><div class="ro-lbl">Currency Symbol</div><div class="ro-val empty" id="rv-sy">—</div></div>
-          <div class="ro-field" id="ro-rg"><div class="ro-lbl">Region</div><div class="ro-val empty" id="rv-rg">—</div></div>
-          <div class="ro-field" id="ro-rate" style="grid-column:span 2">
-            <div class="ro-lbl" style="display:flex;align-items:center;justify-content:space-between">
-              Exchange Rate
-              <span id="ro-rate-badge" style="display:none" class="badge-src"></span>
-            </div>
-            <div class="ro-val empty" id="rv-rate">—</div>
-          </div>
-        </div>
 
         <!-- ── Hidden inputs submitted with form ── -->
         <div class="hidden-fields">
@@ -1018,37 +969,6 @@ function populateAll(x){
   }
   tick(); clkInt=setInterval(tick,1000);
 
-  // ── Read-only display fields ──
-  function setRO(id,val){
-    const wrap=document.getElementById('ro-'+id);
-    const el=document.getElementById('rv-'+id);
-    el.textContent=val;
-    el.className='ro-val';
-    if(wrap) wrap.classList.add('filled');
-  }
-  setRO('country',x.n);
-  setRO('flag',x.f);
-  setRO('dc','+'+x.dc);
-  setRO('tz',x.tz);
-  setRO('sy',x.sy);
-  setRO('rg',x.rg);
-
-  // Rate display field
-  const rateWrap=document.getElementById('ro-rate');
-  const rateRO=document.getElementById('rv-rate');
-  const rateBadgeRO=document.getElementById('ro-rate-badge');
-  if(r!==null){
-    rateRO.textContent='1 USD = '+fmtRN(r)+' '+x.cu;
-    rateRO.className='ro-val '+(isApprox?'rate-approx':'rate-live');
-    rateWrap.classList.add('filled');
-    rateBadgeRO.style.display='inline';
-    rateBadgeRO.textContent=isApprox?'APPROX':Rsrc==='wise'?'WISE':Rsrc==='ecb'?'ECB':'LIVE';
-    rateBadgeRO.className='badge-src '+(isApprox?'approx':Rsrc==='wise'?'ecb':Rsrc==='ecb'?'ecb':'open');
-  } else {
-    rateRO.textContent='—'; rateRO.className='ro-val';
-    rateBadgeRO.style.display='none';
-  }
-
   // ── Hidden fields for form submission ──
   document.getElementById('h-name').value=x.n;
   document.getElementById('h-a2').value=x.c;
@@ -1158,15 +1078,6 @@ function resetAll(){
   document.getElementById('infoPanel').classList.remove('show');
   document.getElementById('fCountry').classList.remove('has-err');
   document.getElementById('cErr').classList.remove('show');
-  // Clear all RO fields
-  ['country','flag','dc','tz','sy','rg','rate'].forEach(id=>{
-    const wrap=document.getElementById('ro-'+id);
-    const el=document.getElementById('rv-'+id);
-    if(el){ el.textContent='—'; el.className='ro-val empty'; }
-    if(wrap) wrap.classList.remove('filled');
-  });
-  document.getElementById('rv-country').textContent='Not selected';
-  document.getElementById('ro-rate-badge').style.display='none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
